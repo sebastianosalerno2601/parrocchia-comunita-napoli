@@ -5,6 +5,7 @@ import { FloatingSocial } from "@/components/FloatingSocial";
 import { Navbar } from "@/components/Navbar";
 import { PartnerStrip } from "@/components/PartnerStrip";
 import { Footer } from "@/components/Footer";
+import { ScrollToTop } from "@/components/ScrollToTop";
 import "./globals.css";
 
 const cormorant = Cormorant({
@@ -50,6 +51,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col pt-[calc(4.75rem+env(safe-area-inset-top,0px))] md:pt-0">
         <ChurchTheme />
+        <ScrollToTop />
         <Navbar />
         <PartnerStrip />
         <FloatingSocial />
