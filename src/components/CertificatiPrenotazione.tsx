@@ -313,7 +313,7 @@ function CertificatiModalPanel({ onClose }: { onClose: () => void }) {
 
   return (
     <div
-      className="fixed inset-0 z-[200] flex items-end justify-center p-0 sm:items-center sm:p-4"
+      className="fixed inset-0 z-[200] flex max-h-[100dvh] items-end justify-center overflow-hidden p-0 sm:items-center sm:p-4"
       role="presentation"
     >
       <button
@@ -327,9 +327,9 @@ function CertificatiModalPanel({ onClose }: { onClose: () => void }) {
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="relative z-10 flex max-h-[min(92vh,900px)] w-full max-w-5xl flex-col overflow-hidden rounded-t-2xl border border-[var(--nav-border)] bg-[var(--paper)] shadow-2xl sm:rounded-2xl"
+        className="relative z-10 flex w-full max-w-5xl flex-col overflow-hidden rounded-t-2xl border border-[var(--nav-border)] bg-[var(--paper)] shadow-2xl max-sm:max-h-[min(88dvh,calc(100dvh-env(safe-area-inset-top,0px)-env(safe-area-inset-bottom,0px)-0.75rem))] sm:max-h-[min(92dvh,900px)] sm:rounded-2xl"
       >
-        <header className="flex shrink-0 items-start justify-between gap-3 border-b border-[var(--nav-border)] px-4 py-4 sm:px-6">
+        <header className="sticky top-0 z-20 flex shrink-0 items-start justify-between gap-3 border-b border-[var(--nav-border)] bg-[var(--paper)] px-4 py-4 pt-[max(1rem,env(safe-area-inset-top,0px))] sm:px-6 sm:pt-4">
           <div>
             <h2
               id={titleId}

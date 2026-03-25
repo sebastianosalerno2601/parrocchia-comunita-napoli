@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cormorant, Spectral } from "next/font/google";
 import { ChurchTheme } from "@/components/ChurchTheme";
 import { FloatingSocial } from "@/components/FloatingSocial";
@@ -23,6 +23,10 @@ const spectral = Spectral({
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
+export const viewport: Viewport = {
+  viewportFit: "cover",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
