@@ -93,12 +93,16 @@ function WhatsAppGlyph() {
 
 function fieldClass(err?: string) {
   return [
-    "mt-1 w-full min-w-0 max-w-full rounded-lg border bg-[var(--paper)] px-3 py-2 text-[var(--ink)] shadow-sm outline-none transition-colors",
+    "mt-1 box-border h-10 w-full min-w-0 max-w-full rounded-lg border bg-[var(--paper)] px-3 py-0 text-sm leading-10 text-[var(--ink)] shadow-sm outline-none transition-colors",
     err
       ? "border-red-600/70 focus:border-red-600"
       : "border-[var(--nav-border)] focus:border-[var(--accent)]",
   ].join(" ");
 }
+
+/** iOS Safari aggiunge padding interno al date picker: allinea l’altezza agli altri campi. */
+const dateInputWebkitFix =
+  "[&::-webkit-datetime-edit]:m-0 [&::-webkit-datetime-edit]:p-0 [&::-webkit-datetime-edit-fields-wrapper]:p-0";
 
 type FormSelectOption = { value: string; label: string; description?: string };
 
@@ -196,7 +200,7 @@ function FormSelect({
     options.find((o) => o.value === selected)?.label ?? placeholder;
 
   const btnClass = [
-    "mt-1 flex w-full min-w-0 max-w-full items-center justify-between gap-2 rounded-lg border bg-[var(--paper)] px-3 py-2 text-left text-sm text-[var(--ink)] shadow-sm outline-none transition-colors",
+    "mt-1 box-border flex h-10 min-h-10 w-full min-w-0 max-w-full items-center justify-between gap-2 rounded-lg border bg-[var(--paper)] px-3 py-0 text-left text-sm leading-10 text-[var(--ink)] shadow-sm outline-none transition-colors",
     error
       ? "border-red-600/70 focus-visible:border-red-600"
       : "border-[var(--nav-border)] focus-visible:border-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--accent-soft)]",
@@ -427,7 +431,10 @@ function CertificatiModalPanel({ onClose }: { onClose: () => void }) {
                   type="date"
                   required
                   max={new Date().toISOString().slice(0, 10)}
-                  className={fieldClass(state.errors?.dataNascita)}
+                  className={[
+                    fieldClass(state.errors?.dataNascita),
+                    dateInputWebkitFix,
+                  ].join(" ")}
                   aria-invalid={!!state.errors?.dataNascita}
                 />
                 {state.errors?.dataNascita ? (
