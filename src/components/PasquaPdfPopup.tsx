@@ -7,27 +7,22 @@ const PDF_SRC = "/Lettera-Pasqua-2026-SANT-ELIGIO.pdf";
 const SESSION_NO_KEY = "pasqua_pdf_no_v1";
 const SESSION_ASKED_KEY = "pasqua_pdf_asked_v1";
 
-export function PasquaPdfPopup() {
-  const [ready, setReady] = useState(false);
+export function PasquaPdfPopup({
+  triggerLabel = "Lettera di Pasqua",
+  triggerClassName = "nav-pill !px-3 !py-1.5 text-[0.95rem]",
+}: {
+  triggerLabel?: string;
+  triggerClassName?: string;
+}) {
   const [open, setOpen] = useState(false);
   const [ask, setAsk] = useState(false);
   const timerRef = useRef<number | null>(null);
 
-  useEffect(() => {
-    setReady(true);
-
-    try {
-      const storedNo = sessionStorage.getItem(SESSION_NO_KEY);
-      if (storedNo === "1") {
-        setOpen(false);
-        return;
-      }
-    } catch {
-      // Se sessionStorage non è disponibile, mostriamo comunque il popup.
-    }
-
+  const openModal = () => {
+    // Apriamo sempre su richiesta dell'utente: non blocchiamo l'apertura con la sessione "No".
+    setAsk(false);
     setOpen(true);
-  }, []);
+  };
 
   useEffect(() => {
     if (!open) return;
@@ -55,12 +50,12 @@ export function PasquaPdfPopup() {
   }, [open]);
 
   useEffect(() => {
-    if (!ready || !ask) return;
+    if (!ask) return;
     const t = window.setTimeout(() => {
       document.getElementById("pasqua-pdf-no-btn")?.focus?.();
     }, 50);
     return () => window.clearTimeout(t);
-  }, [ready, ask]);
+  }, [ask]);
 
   const storeNo = () => {
     try {
@@ -77,7 +72,13 @@ export function PasquaPdfPopup() {
     setOpen(false);
   };
 
-  if (!ready || !open) return null;
+  if (!open) {
+    return (
+      <button type="button" className={triggerClassName} onClick={openModal}>
+        {triggerLabel}
+      </button>
+    );
+  }
 
   return createPortal(
     <div

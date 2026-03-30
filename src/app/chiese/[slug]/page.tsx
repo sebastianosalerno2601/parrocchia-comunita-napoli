@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { ParrocchiaStoria } from "@/components/ParrocchiaStoria";
 import { VangeloDelGiornoSection } from "@/components/VangeloDelGiorno";
 import IntroPopup from "@/components/IntroPopup";
+import { PasquaPdfPopup } from "@/components/PasquaPdfPopup";
 import {
   getParrocchiaBySlug,
   parrocchie,
@@ -133,6 +134,13 @@ export default async function ChiesaPage({ params }: PageProps) {
             — quando vorrete — una selezione curata dal grande archivio
             fotografico.
           </p>
+
+          <div className="mt-5 flex justify-center">
+            <PasquaPdfPopup
+              triggerLabel="Lettera di Pasqua"
+              triggerClassName="text-sm font-medium text-[var(--accent)] underline-offset-4 hover:underline"
+            />
+          </div>
         </article>
 
         {storia ? (
