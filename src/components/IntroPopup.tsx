@@ -6,7 +6,14 @@ const SESSION_KEY = "intro-popup-handled";
 
 type IntroPopupImage = { src: string; alt: string };
 
-export default function IntroPopup() {
+export default function IntroPopup({
+  triggerLabel = "Lettera di Pasqua",
+  triggerClassName =
+    "nav-pill font-display text-lg font-medium self-center w-fit",
+}: {
+  triggerLabel?: string;
+  triggerClassName?: string;
+}) {
   const images = useMemo<IntroPopupImage[]>(
     () => [
       { src: "/pagina1.png", alt: "Pagina 1" },
@@ -17,6 +24,7 @@ export default function IntroPopup() {
     [],
   );
 
+  const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
   const [askContinue, setAskContinue] = useState(false);
   const timerRef = useRef<number | null>(null);
@@ -34,6 +42,7 @@ export default function IntroPopup() {
     })();
 
     const t = window.setTimeout(() => {
+      setMounted(true);
       setOpen(shouldShow);
     }, 0);
 
@@ -68,7 +77,22 @@ export default function IntroPopup() {
     }
   };
 
-  if (!open) return null;
+  const openManual = () => {
+    setOpen(true);
+    setAskContinue(false);
+    setHasAskedOnce(false);
+    setImagesKey((k) => k + 1);
+  };
+
+  if (!mounted) return null;
+
+  if (!open) {
+    return (
+      <button type="button" className={triggerClassName} onClick={openManual}>
+        {triggerLabel}
+      </button>
+    );
+  }
 
   const onContinue = () => {
     // Ritorna alle immagini senza chiudere e senza chiedere di nuovo.
@@ -87,11 +111,8 @@ export default function IntroPopup() {
         <div className="flex items-start justify-between gap-3 border-b border-[var(--nav-border)] px-4 py-3">
           <div>
             <h2 className="font-display text-base font-semibold text-[var(--ink)]">
-              Napoli, centro storico
+              Lettera di Pasqua 2026
             </h2>
-            <p className="mt-1 text-sm text-[var(--ink-muted)]">
-              Una breve lettura introduttiva.
-            </p>
           </div>
 
           <button

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { parrocchie } from "@/lib/parrocchie";
 import IntroPopup from "@/components/IntroPopup";
-import { PasquaPdfPopup } from "@/components/PasquaPdfPopup";
 
 const temaEtichetta: Record<string, string> = {
   barocco: "Barocco — oro e marmi",
@@ -38,12 +37,6 @@ export default function Home() {
       </section>
 
       <section className="mx-auto w-full max-w-6xl flex-1 px-4 pb-20">
-        <div className="mb-6 flex justify-center">
-          <PasquaPdfPopup
-            triggerLabel="Lettera di Pasqua"
-            triggerClassName="text-sm font-medium text-[var(--accent)] underline-offset-4 hover:underline"
-          />
-        </div>
         <div className="grid gap-6 md:grid-cols-3">
           {parrocchie.map((p) => (
             <Link
