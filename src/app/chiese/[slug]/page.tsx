@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { ParrocchiaStoria } from "@/components/ParrocchiaStoria";
 import { VangeloDelGiornoSection } from "@/components/VangeloDelGiorno";
 import IntroPopup from "@/components/IntroPopup";
+import { OrariChiese } from "@/components/OrariChiese";
 import {
   getParrocchiaBySlug,
   parrocchie,
@@ -128,13 +129,7 @@ export default async function ChiesaPage({ params }: PageProps) {
           <p className="mt-4 text-lg leading-relaxed text-[var(--ink-muted)]">
             {p.descrizione}
           </p>
-          <p className="mt-6 text-sm leading-relaxed text-[var(--ink-muted)]">
-            Qui andranno orari delle messe, avvisi della comunità, catechesi e
-            — quando vorrete — una selezione curata dal grande archivio
-            fotografico.
-          </p>
-
-          {/* Lettera di Pasqua disponibile tramite il riferimento in alto. */}
+          <OrariChiese slug={p.slug} tema={p.tema} />
         </article>
 
         {storia ? (

@@ -151,10 +151,7 @@ function FormSelect({
   }, []);
 
   useLayoutEffect(() => {
-    if (!open) {
-      setMenuRect(null);
-      return;
-    }
+    if (!open) return;
     syncMenuPosition();
     const onScrollOrResize = () => syncMenuPosition();
     window.addEventListener("resize", onScrollOrResize);
@@ -589,9 +586,7 @@ export const CertificatiPrenotazione = forwardRef<
 >(function CertificatiPrenotazione({ buttonClassName }, ref) {
   const [open, setOpen] = useState(false);
   const [dialogKey, setDialogKey] = useState(0);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
+  const [mounted] = useState(() => typeof window !== "undefined");
 
   const apri = useCallback(() => {
     setDialogKey((k) => k + 1);

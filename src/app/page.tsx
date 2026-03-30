@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { parrocchie } from "@/lib/parrocchie";
 import IntroPopup from "@/components/IntroPopup";
 
@@ -24,6 +25,25 @@ export default function Home() {
           <p className="font-display text-sm font-semibold uppercase tracking-[0.35em] text-[var(--accent)]">
             Napoli, centro storico
           </p>
+          <div className="mx-auto mt-5 relative inline-flex items-center justify-center rounded-full">
+            {/* Glow esterno per dare contrasto senza essere troppo invasivo */}
+            <div
+              aria-hidden
+              className="absolute -inset-4 rounded-full bg-[var(--accent-soft)] blur-xl opacity-80"
+            />
+            <div className="relative inline-flex items-center justify-center rounded-full border border-[var(--accent)]/20 bg-[var(--paper)]/80 px-16 py-12 shadow-[0_32px_110px_rgba(139,105,20,0.38)] ring-1 ring-[var(--accent)]/30 backdrop-blur">
+              <Image
+                src="/Logo-comunita.png"
+                alt="Comunità parrocchiale"
+                width={1040}
+                height={600}
+                priority
+                className="h-32 w-auto opacity-100"
+                sizes="(max-width: 640px) 220px, 320px"
+                quality={100}
+              />
+            </div>
+          </div>
           <h1 className="font-display mt-4 text-4xl font-semibold leading-tight tracking-tight text-[var(--ink)] md:text-5xl lg:text-6xl">
             Una comunità,
             <span className="block text-[var(--ink-muted)]">tre volti di pietra e preghiera</span>

@@ -42,15 +42,18 @@ function MenuGlyph({ open }: { open: boolean }) {
 
 export function Navbar() {
   const pathname = usePathname();
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuState, setMenuState] = useState<{
+    open: boolean;
+    path: string | null;
+  }>({ open: false, path: null });
   const drawerRef = useRef<HTMLDivElement>(null);
   const menuBtnRef = useRef<HTMLButtonElement>(null);
   const certificatiRef = useRef<CertificatiPrenotazioneHandle>(null);
   const titleId = useId();
 
-  useEffect(() => {
-    setMenuOpen(false);
-  }, [pathname]);
+  const menuOpen = menuState.open && menuState.path === pathname;
+
+  const close = () => setMenuState({ open: false, path: null });
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -60,7 +63,7 @@ export function Navbar() {
       drawerRef.current?.querySelector<HTMLElement>("a,button")?.focus();
     }, 0);
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setMenuOpen(false);
+      if (e.key === "Escape") close();
     };
     document.addEventListener("keydown", onKey);
     return () => {
@@ -70,8 +73,6 @@ export function Navbar() {
       menuBtnRef.current?.focus();
     };
   }, [menuOpen]);
-
-  const close = () => setMenuOpen(false);
 
   const drawerLinkClass =
     "nav-pill font-display text-lg font-medium w-full justify-start rounded-xl text-left";
@@ -102,7 +103,13 @@ export function Navbar() {
           aria-controls="mobile-nav-drawer"
           aria-haspopup="dialog"
           aria-label={menuOpen ? "Chiudi menu" : "Apri menu"}
-          onClick={() => setMenuOpen((o) => !o)}
+          onClick={() => {
+            setMenuState((prev) => {
+              const isOpen = prev.open && prev.path === pathname;
+              if (isOpen) return { open: false, path: null };
+              return { open: true, path: pathname };
+            });
+          }}
         >
           <MenuGlyph open={menuOpen} />
         </button>
