@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { parrocchie } from "@/lib/parrocchie";
-import { PasquaPdfPopup } from "@/components/PasquaPdfPopup";
+import IntroPopup from "@/components/IntroPopup";
 
 const temaEtichetta: Record<string, string> = {
   barocco: "Barocco — oro e marmi",
@@ -11,7 +11,7 @@ const temaEtichetta: Record<string, string> = {
 export default function Home() {
   return (
     <main className="flex flex-1 flex-col">
-      <PasquaPdfPopup />
+      <IntroPopup />
       <section className="relative overflow-hidden px-4 pb-16 pt-14 md:pb-24 md:pt-20">
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.35]"
