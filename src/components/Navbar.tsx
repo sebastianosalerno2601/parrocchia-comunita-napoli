@@ -13,6 +13,7 @@ import { parrocchie } from "@/lib/parrocchie";
 /** Voci extra del menu mobile (drawer). Esempio: `{ href: "/orari", label: "Orari Messe" }`. */
 const MENU_EXTRA: { href: string; label: string }[] = [
   { href: "/caritas", label: "Caritas" },
+  { href: "/eventi", label: "Eventi" },
 ];
 
 function MenuGlyph({ open }: { open: boolean }) {
@@ -136,6 +137,9 @@ export function Navbar() {
         >
           <Link href="/caritas" className="nav-pill font-display text-lg font-medium">
             Caritas
+          </Link>
+          <Link href="/eventi" className="nav-pill font-display text-lg font-medium">
+            Eventi
           </Link>
           {parrocchie.map((p) => (
             <Link
