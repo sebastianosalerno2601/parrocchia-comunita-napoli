@@ -17,35 +17,48 @@ export default function IntroPopup() {
     [],
   );
 
-  const [open, setOpen] = useState(() => {
-    // `sessionStorage` non esiste in SSR: apriamo il popup solo sul client.
-    if (typeof window === "undefined") return false;
-    try {
-      return !window.sessionStorage.getItem(SESSION_KEY);
-    } catch {
-      // Se sessionStorage non è disponibile, preferiamo mostrare comunque il popup.
-      return true;
-    }
-  });
+  const [open, setOpen] = useState(false);
   const [askContinue, setAskContinue] = useState(false);
   const timerRef = useRef<number | null>(null);
+  const [imagesKey, setImagesKey] = useState(0);
+  const [hasAskedOnce, setHasAskedOnce] = useState(false);
 
   useEffect(() => {
-    if (!open || askContinue) return;
+    // Evita mismatch di hydration: al primo render (server + client) non mostriamo nulla.
+    const shouldShow = (() => {
+      try {
+        return !window.sessionStorage.getItem(SESSION_KEY);
+      } catch {
+        return true;
+      }
+    })();
+
+    const t = window.setTimeout(() => {
+      setOpen(shouldShow);
+    }, 0);
+
+    return () => window.clearTimeout(t);
+  }, []);
+
+  useEffect(() => {
+    if (!open || askContinue || hasAskedOnce) return;
 
     timerRef.current = window.setTimeout(() => {
       setAskContinue(true);
+      setHasAskedOnce(true);
     }, 20_000);
 
     return () => {
       if (timerRef.current) window.clearTimeout(timerRef.current);
       timerRef.current = null;
     };
-  }, [open, askContinue]);
+  }, [open, askContinue, hasAskedOnce]);
 
   const closeAndHandle = (handled: boolean) => {
     setOpen(false);
     setAskContinue(false);
+    // Quando il popup viene chiuso, blocchiamo eventuali nuovi countdown finché resta comunque off.
+    setHasAskedOnce(true);
 
     if (!handled) return;
     try {
@@ -56,6 +69,12 @@ export default function IntroPopup() {
   };
 
   if (!open) return null;
+
+  const onContinue = () => {
+    // Ritorna alle immagini senza chiudere e senza chiedere di nuovo.
+    setAskContinue(false);
+    setImagesKey((k) => k + 1);
+  };
 
   return (
     <div
@@ -85,7 +104,7 @@ export default function IntroPopup() {
         </div>
 
         {!askContinue ? (
-          <div className="max-h-[80vh] overflow-y-auto p-4">
+          <div className="max-h-[80vh] overflow-y-auto p-4" key={imagesKey}>
             <div className="space-y-4">
               {images.map((img) => (
                 <img
@@ -111,7 +130,7 @@ export default function IntroPopup() {
                 <button
                   type="button"
                   className="flex-1 rounded-lg bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-[var(--paper)] transition-opacity hover:opacity-90"
-                  onClick={() => closeAndHandle(true)}
+                  onClick={onContinue}
                 >
                   Si
                 </button>
