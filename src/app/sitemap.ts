@@ -1,50 +1,26 @@
 import type { MetadataRoute } from "next";
-import { parrocchie } from "@/lib/parrocchie";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ?? "https://santeligiomaggiore.it";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://santeligiomaggiore.it";
   const base = siteUrl.replace(/\/$/, "");
+  const lastModified = new Date();
 
-  const now = new Date();
+  const paths = [
+    "/",
+    "/caritas",
+    "/eventi",
+    "/privacy-policy",
+    "/cookie-policy",
+    "/chiese/sant-arcangelo-armieri",
+    "/chiese/sant-eligio-maggiore",
+    "/chiese/san-giovanni-a-mare",
+  ] as const;
 
-  return [
-    {
-      url: `${base}/`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 1,
-    },
-    ...parrocchie.map((p) => ({
-      url: `${base}/chiese/${p.slug}`,
-      lastModified: now,
-      changeFrequency: "weekly" as const,
-      priority: 0.8,
-    })),
-    {
-      url: `${base}/caritas`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
-      url: `${base}/eventi`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
-      url: `${base}/privacy-policy`,
-      lastModified: now,
-      changeFrequency: "yearly",
-      priority: 0.2,
-    },
-    {
-      url: `${base}/cookie-policy`,
-      lastModified: now,
-      changeFrequency: "yearly",
-      priority: 0.2,
-    },
-  ];
+  return paths.map((path) => ({
+    url: `${base}${path}`,
+    lastModified,
+    changeFrequency: path === "/" || path.startsWith("/chiese/") || path === "/eventi" ? "weekly" : "monthly",
+    priority: path === "/" ? 1 : path.startsWith("/chiese/") ? 0.8 : path === "/eventi" ? 0.7 : 0.5,
+  }));
 }
 

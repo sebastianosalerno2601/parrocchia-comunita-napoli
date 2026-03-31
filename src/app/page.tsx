@@ -10,8 +10,30 @@ const temaEtichetta: Record<string, string> = {
 };
 
 export default function Home() {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://santeligiomaggiore.it";
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Comunità parrocchiale Napoli",
+    url: siteUrl.replace(/\/$/, ""),
+    inLanguage: "it-IT",
+    publisher: {
+      "@type": "Organization",
+      name: "Comunità parrocchiale Napoli",
+      logo: {
+        "@type": "ImageObject",
+        url: `${siteUrl.replace(/\/$/, "")}/Logo-comunita.png`,
+      },
+    },
+  };
+
   return (
     <main className="flex flex-1 flex-col">
+      <script
+        type="application/ld+json"
+        // JSON-LD aiuta Google a comprendere meglio entità e sito.
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <IntroPopup />
       <section className="relative overflow-hidden px-4 pb-16 pt-14 md:pb-24 md:pt-20">
         <div

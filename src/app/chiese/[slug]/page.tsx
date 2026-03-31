@@ -15,6 +15,8 @@ import { getStoriaParrocchia } from "@/lib/storia-parrocchie";
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://santeligiomaggiore.it";
+const baseUrl = siteUrl.replace(/\/$/, "");
 
 export function generateStaticParams() {
   return parrocchie.map((p) => ({ slug: p.slug }));
@@ -26,16 +28,31 @@ export async function generateMetadata({
   const { slug } = await params;
   const p = getParrocchiaBySlug(slug);
   if (!p) return { title: "Chiesa" };
+  const canonical = `/chiese/${p.slug}`;
   return {
     title: p.nomeCompleto,
     description: p.descrizione,
+    alternates: {
+      canonical,
+    },
     openGraph: {
+      type: "article",
+      locale: "it_IT",
+      url: `${baseUrl}${canonical}`,
+      title: p.nomeCompleto,
+      description: p.descrizione,
       images: [
         {
           url: p.bannerRow[0].src,
           alt: p.bannerRow[0].alt,
         },
       ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: p.nomeCompleto,
+      description: p.descrizione,
+      images: [p.bannerRow[0].src],
     },
   };
 }
@@ -60,6 +77,36 @@ export default async function ChiesaPage({ params }: PageProps) {
         facebookHrefForEmbed,
       )}&tabs=timeline&width=500&height=700&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true`
     : null;
+  const churchJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Church",
+    name: p.nomeCompleto,
+    address: p.indirizzo,
+    description: p.descrizione,
+    url: `${baseUrl}/chiese/${p.slug}`,
+    image: p.bannerRow[0]?.src
+      ? `${baseUrl}${p.bannerRow[0].src}`
+      : `${baseUrl}/Logo-comunita.png`,
+    sameAs: p.facebookPageUrl ? [p.facebookPageUrl] : undefined,
+  };
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: `${baseUrl}/`,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: p.nomeCompleto,
+        item: `${baseUrl}/chiese/${p.slug}`,
+      },
+    ],
+  };
 
   const cardClass =
     p.tema === "barocco"
@@ -70,6 +117,14 @@ export default async function ChiesaPage({ params }: PageProps) {
 
   return (
     <main className="flex flex-1 flex-col">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(churchJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <IntroPopup />
       <figure className="relative isolate mt-4 w-full overflow-hidden bg-gradient-to-b from-[var(--paper-deep)] via-[var(--paper)] to-[var(--paper)] px-3 pt-5 pb-1 sm:mt-5 sm:px-6 sm:pt-6 md:mt-0">
         <div className="relative mx-auto max-w-6xl">

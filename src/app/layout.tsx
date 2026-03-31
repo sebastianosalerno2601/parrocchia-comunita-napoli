@@ -23,6 +23,7 @@ const spectral = Spectral({
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const siteName = "Comunità parrocchiale Napoli";
 
 export const viewport: Viewport = {
   viewportFit: "cover",
@@ -36,6 +37,44 @@ export const metadata: Metadata = {
   },
   description:
     "Tre chiese nel centro storico di Napoli: Sant’Arcangelo agli Armieri, Sant’Eligio Maggiore e San Giovanni a mare.",
+  keywords: [
+    "Sant'Eligio Maggiore",
+    "San Giovanni a Mare",
+    "Sant'Arcangelo agli Armieri",
+    "parrocchie Napoli centro storico",
+    "messe Napoli",
+    "eventi parrocchiali Napoli",
+  ],
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "it_IT",
+    url: siteUrl,
+    siteName,
+    title: "Comunità parrocchiale — Napoli",
+    description:
+      "Tre chiese nel centro storico di Napoli: Sant’Arcangelo agli Armieri, Sant’Eligio Maggiore e San Giovanni a mare.",
+    images: [
+      {
+        url: "/Logo-comunita.png",
+        width: 1040,
+        height: 600,
+        alt: "Logo Comunità parrocchiale Napoli",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Comunità parrocchiale — Napoli",
+    description:
+      "Tre chiese nel centro storico di Napoli: Sant’Arcangelo agli Armieri, Sant’Eligio Maggiore e San Giovanni a mare.",
+    images: ["/Logo-comunita.png"],
+  },
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION,
+  },
   icons: {
     icon: "/favicon.ico?v=2",
     shortcut: "/favicon.ico?v=2",
