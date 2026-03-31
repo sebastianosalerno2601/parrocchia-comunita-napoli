@@ -312,7 +312,7 @@ export default function AdminEventiPage() {
         Admin Eventi
       </h1>
       <p className="mt-2 text-sm text-[var(--ink-muted)]">
-        Carica eventi con immagini Cloudinary e gestisci la lista pubblica.
+        Crea o modifica eventi e gestisci le immagini.
       </p>
 
       <section className="mt-6 rounded-2xl border border-[var(--nav-border)] bg-[var(--paper)]/80 p-5 shadow-sm">
