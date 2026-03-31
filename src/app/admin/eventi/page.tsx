@@ -48,8 +48,10 @@ export default function AdminEventiPage() {
   const [galleryInputKey, setGalleryInputKey] = useState(0);
   const [removedExistingIndices, setRemovedExistingIndices] = useState<number[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [eventi, setEventi] = useState<AdminEvento[]>([]);
   const [loading, setLoading] = useState(false);
+  const [loadingList, setLoadingList] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
 
   const canSubmit = useMemo(
@@ -98,9 +100,18 @@ export default function AdminEventiPage() {
   };
 
   async function loadEventi() {
-    const res = await fetch("/api/events", { cache: "no-store" });
-    const data = await res.json();
-    setEventi((data.eventi as AdminEvento[]) ?? []);
+    setLoadingList(true);
+    setMsg(null);
+    try {
+      const res = await fetch("/api/events", { cache: "no-store" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Caricamento eventi fallito.");
+      setEventi((data.eventi as AdminEvento[]) ?? []);
+    } catch (err) {
+      setMsg(err instanceof Error ? err.message : "Errore imprevisto.");
+    } finally {
+      setLoadingList(false);
+    }
   }
 
   async function uploadFilesWithCloudinary(
@@ -276,6 +287,7 @@ export default function AdminEventiPage() {
   }
 
   async function removeEvento(id: string) {
+    setDeletingId(id);
     setLoading(true);
     setMsg(null);
     try {
@@ -290,6 +302,7 @@ export default function AdminEventiPage() {
       setMsg(err instanceof Error ? err.message : "Errore imprevisto.");
     } finally {
       setLoading(false);
+      setDeletingId(null);
     }
   }
 
@@ -304,7 +317,7 @@ export default function AdminEventiPage() {
 
       <section className="mt-6 rounded-2xl border border-[var(--nav-border)] bg-[var(--paper)]/80 p-5 shadow-sm">
         <label className="text-sm font-medium text-[var(--ink)]" htmlFor="adminToken">
-          Token admin
+          Password
         </label>
         <input
           id="adminToken"
@@ -312,16 +325,26 @@ export default function AdminEventiPage() {
           value={token}
           onChange={(e) => setToken(e.target.value)}
           className="mt-2 w-full rounded-lg border border-[var(--nav-border)] bg-[var(--paper)] px-3 py-2 text-sm text-[var(--ink)] outline-none"
-          placeholder="ADMIN_DASHBOARD_TOKEN"
+          placeholder="Inserisci la password"
         />
 
         <button
           type="button"
           onClick={() => loadEventi()}
-          className="nav-pill mt-4 text-base font-medium"
-          disabled={!token || loading}
+          className="nav-pill mt-4 inline-flex items-center justify-center gap-2 text-base font-medium"
+          disabled={!token || loading || loadingList}
         >
-          Carica elenco eventi
+          {loadingList ? (
+            <>
+              <span
+                aria-hidden
+                className="h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent"
+              />
+              Caricamento elenco...
+            </>
+          ) : (
+            "Carica elenco eventi"
+          )}
         </button>
       </section>
 
@@ -521,14 +544,22 @@ export default function AdminEventiPage() {
 
           <button
             type="submit"
-            className="nav-pill text-base font-medium"
+            className="nav-pill inline-flex items-center justify-center gap-2 text-base font-medium"
             disabled={!canSubmit || loading}
           >
-            {loading
-              ? "Salvataggio..."
-              : editingId
+            {loading ? (
+              <>
+                <span
+                  aria-hidden
+                  className="h-4 w-4 animate-spin rounded-full border-2 border-current border-r-transparent"
+                />
+                Salvataggio...
+              </>
+            ) : (
+              editingId
                 ? "Salva modifiche"
-                : "Pubblica evento"}
+                : "Pubblica evento"
+            )}
           </button>
           {editingId ? (
             <button
@@ -580,10 +611,20 @@ export default function AdminEventiPage() {
                 <button
                   type="button"
                   onClick={() => removeEvento(ev.id)}
-                  className="rounded-lg border border-[var(--nav-border)] px-3 py-1.5 text-xs text-[var(--ink-muted)] hover:bg-[var(--paper-deep)]"
+                  className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-[var(--nav-border)] px-3 py-1.5 text-xs text-[var(--ink-muted)] hover:bg-[var(--paper-deep)]"
                   disabled={loading || !token}
                 >
-                  Elimina
+                  {deletingId === ev.id ? (
+                    <>
+                      <span
+                        aria-hidden
+                        className="h-3 w-3 animate-spin rounded-full border-2 border-current border-r-transparent"
+                      />
+                      Eliminazione...
+                    </>
+                  ) : (
+                    "Elimina"
+                  )}
                 </button>
               </li>
             ))}
