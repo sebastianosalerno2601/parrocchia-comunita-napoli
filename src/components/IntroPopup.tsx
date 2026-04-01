@@ -102,13 +102,15 @@ export default function IntroPopup({
 
   return (
     <div
-      className="fixed inset-0 z-[250] flex items-center justify-center bg-black/60 p-3 backdrop-blur-[2px]"
+      className="fixed inset-0 z-[250] flex max-h-[100dvh] items-end justify-center overflow-hidden bg-black/60 p-0 backdrop-blur-[2px] sm:items-center sm:p-4"
       role="dialog"
       aria-modal="true"
       aria-label="Intro"
     >
-      <div className="w-full max-w-3xl overflow-hidden rounded-2xl border border-[var(--nav-border)] bg-[var(--paper)] shadow-2xl">
-        <div className="flex items-start justify-between gap-3 border-b border-[var(--nav-border)] px-4 py-3">
+      <div
+        className="relative z-10 flex w-full max-w-3xl flex-col overflow-hidden rounded-t-2xl border border-[var(--nav-border)] bg-[var(--paper)] shadow-2xl max-sm:max-h-[min(88dvh,calc(100dvh-env(safe-area-inset-top,0px)-env(safe-area-inset-bottom,0px)-0.75rem))] sm:max-h-[min(92dvh,900px)] sm:rounded-2xl"
+      >
+        <header className="sticky top-0 z-20 flex shrink-0 items-start justify-between gap-3 border-b border-[var(--nav-border)] bg-[var(--paper)] px-4 py-3 pt-[max(1rem,env(safe-area-inset-top,0px))] sm:pt-4">
           <div>
             <h2 className="font-display text-base font-semibold text-[var(--ink)]">
               Lettera di Pasqua 2026
@@ -122,10 +124,13 @@ export default function IntroPopup({
           >
             Chiudi
           </button>
-        </div>
+        </header>
 
         {!askContinue ? (
-          <div className="max-h-[80vh] overflow-y-auto p-4" key={imagesKey}>
+          <div
+            className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4"
+            key={imagesKey}
+          >
             <div className="space-y-4">
               {images.map((img) => (
                 <img

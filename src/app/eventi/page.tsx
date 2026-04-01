@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { listEventi } from "@/lib/eventi-store";
+import { sortProssimiPassati } from "@/lib/eventi-sort";
 import { EventiCarousel } from "@/components/EventiCarousel";
 
 export const dynamic = "force-dynamic";
 
 export default async function EventiPage() {
   const eventi = await listEventi();
-  const prossimi = eventi.filter((e) => e.isUpcoming);
-  const passati = eventi.filter((e) => e.isPast);
+  const { prossimi, passati } = sortProssimiPassati(eventi);
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 pb-20 pt-10">

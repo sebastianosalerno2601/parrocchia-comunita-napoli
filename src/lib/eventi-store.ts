@@ -36,14 +36,31 @@ export async function listEventi(): Promise<EventoItem[]> {
     const cover = imageUrls[0] ?? imageUrlFallback;
     const dataTime = new Date(row.data_iso as string).getTime();
     const now = Date.now();
-    // Regola richiesta: superata la data, l'evento passa automaticamente tra i "passati".
-    const autoPast = Number.isFinite(dataTime) ? dataTime < now : false;
-    const fallbackUpcoming = Number.isFinite(dataTime) ? dataTime >= now : true;
-    const fallbackPast = autoPast;
-    const storedUpcoming = (row.is_upcoming as boolean | null) ?? fallbackUpcoming;
-    const storedPast = (row.is_past as boolean | null) ?? fallbackPast;
-    const finalPast = autoPast || storedPast;
-    const finalUpcoming = !finalPast && storedUpcoming;
+    const hasValidTime = Number.isFinite(dataTime);
+    /** Data/ora già trascorsa → sempre "passato" in UI (senza attendere aggiornamenti in DB). */
+    const autoPast = hasValidTime && dataTime < now;
+    /** Data/ora ancora da venire → mai tra i passati solo per un flag salvato male. */
+    const autoFuture = hasValidTime && dataTime >= now;
+
+    const storedUpcoming =
+      (row.is_upcoming as boolean | null) ??
+      (hasValidTime ? dataTime >= now : true);
+    const storedPast =
+      (row.is_past as boolean | null) ?? (hasValidTime ? dataTime < now : false);
+
+    let finalPast: boolean;
+    let finalUpcoming: boolean;
+    if (autoPast) {
+      finalPast = true;
+      finalUpcoming = false;
+    } else if (autoFuture) {
+      finalPast = false;
+      finalUpcoming = storedUpcoming;
+    } else {
+      // data_iso non interpretabile come data: fallback sui flag in DB
+      finalPast = storedPast;
+      finalUpcoming = !finalPast && storedUpcoming;
+    }
 
     return {
     id: row.id as string,

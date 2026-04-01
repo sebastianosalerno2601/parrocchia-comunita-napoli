@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useMemo, useState } from "react";
+import { orderEventiForAdminList } from "@/lib/eventi-sort";
 
 type AdminEvento = {
   id: string;
@@ -106,7 +107,8 @@ export default function AdminEventiPage() {
       const res = await fetch("/api/events", { cache: "no-store" });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Caricamento eventi fallito.");
-      setEventi((data.eventi as AdminEvento[]) ?? []);
+      const raw = (data.eventi as AdminEvento[]) ?? [];
+      setEventi(orderEventiForAdminList(raw));
     } catch (err) {
       setMsg(err instanceof Error ? err.message : "Errore imprevisto.");
     } finally {

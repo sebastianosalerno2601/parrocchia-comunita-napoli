@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 type EventoPreview = {
   id: string;
@@ -59,20 +59,59 @@ export function EventiCarousel({
   eventi: EventoPreview[];
 }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
+  /** Su mobile lo swipe orizzontale è incompatibile con lo scroll automatico continuo. */
+  const [autoScrollEnabled, setAutoScrollEnabled] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const sync = () => setAutoScrollEnabled(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
 
   useEffect(() => {
     const node = scrollerRef.current;
-    if (!node) return;
+    if (!node || eventi.length <= 1 || !autoScrollEnabled) return;
+
+    let userInteracting = false;
+    let resumeTimer: number | undefined;
+
+    const pause = () => {
+      userInteracting = true;
+      window.clearTimeout(resumeTimer);
+    };
+
+    const scheduleResume = () => {
+      window.clearTimeout(resumeTimer);
+      resumeTimer = window.setTimeout(() => {
+        userInteracting = false;
+      }, 2500);
+    };
+
+    node.addEventListener("pointerdown", pause);
+    node.addEventListener("pointerup", scheduleResume);
+    node.addEventListener("pointercancel", scheduleResume);
+    node.addEventListener("pointerleave", scheduleResume);
+
     const interval = window.setInterval(() => {
-      if (!node) return;
+      if (!node || userInteracting) return;
       const atEnd = node.scrollLeft + node.clientWidth >= node.scrollWidth - 2;
       node.scrollTo({
         left: atEnd ? 0 : node.scrollLeft + 1,
         behavior: "auto",
       });
     }, 20);
-    return () => window.clearInterval(interval);
-  }, []);
+
+    return () => {
+      window.clearInterval(interval);
+      window.clearTimeout(resumeTimer);
+      node.removeEventListener("pointerdown", pause);
+      node.removeEventListener("pointerup", scheduleResume);
+      node.removeEventListener("pointercancel", scheduleResume);
+      node.removeEventListener("pointerleave", scheduleResume);
+    };
+  }, [eventi.length, autoScrollEnabled]);
 
   const cardWidth = useMemo(() => 360, []);
 
@@ -111,7 +150,7 @@ export function EventiCarousel({
 
       <div
         ref={scrollerRef}
-        className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:thin]"
+        className="flex touch-pan-x snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-2 [scrollbar-width:thin] [-webkit-overflow-scrolling:touch]"
       >
         {eventi.map((ev) => (
           <Link
