@@ -23,7 +23,7 @@ const spectral = Spectral({
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-const siteName = "Comunità parrocchiale Napoli";
+const siteName = "Sant'Eligio Maggiore — Comunità parrocchiale Napoli";
 
 export const viewport: Viewport = {
   viewportFit: "cover",
@@ -32,12 +32,16 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Comunità parrocchiale — Napoli",
-    template: "%s — Comunità parrocchiale Napoli",
+    default:
+      "Sant'Eligio Maggiore — Comunità parrocchiale Napoli centro storico",
+    template: "%s | Sant'Eligio Maggiore e comunità Napoli",
   },
   description:
-    "Tre chiese nel centro storico di Napoli: Sant’Arcangelo agli Armieri, Sant’Eligio Maggiore e San Giovanni a mare.",
+    "Sant'Eligio Maggiore a Napoli: comunità parrocchiale nel centro storico con Sant'Arcangelo agli Armieri e San Giovanni a mare. Messe, orari e avvisi.",
   keywords: [
+    "Sant'Eligio Maggiore Napoli",
+    "Chiesa Sant'Eligio Maggiore",
+    "parrocchia Sant'Eligio",
     "Sant'Eligio Maggiore",
     "San Giovanni a Mare",
     "Sant'Arcangelo agli Armieri",
@@ -53,23 +57,25 @@ export const metadata: Metadata = {
     locale: "it_IT",
     url: siteUrl,
     siteName,
-    title: "Comunità parrocchiale — Napoli",
+    title:
+      "Sant'Eligio Maggiore — Comunità parrocchiale Napoli centro storico",
     description:
-      "Tre chiese nel centro storico di Napoli: Sant’Arcangelo agli Armieri, Sant’Eligio Maggiore e San Giovanni a mare.",
+      "Sant'Eligio Maggiore a Napoli: comunità parrocchiale nel centro storico con Sant'Arcangelo agli Armieri e San Giovanni a mare. Messe, orari e avvisi.",
     images: [
       {
         url: "/Logo-comunita.png",
         width: 1040,
         height: 600,
-        alt: "Logo Comunità parrocchiale Napoli",
+        alt: "Sant'Eligio Maggiore — Comunità parrocchiale Napoli",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Comunità parrocchiale — Napoli",
+    title:
+      "Sant'Eligio Maggiore — Comunità parrocchiale Napoli centro storico",
     description:
-      "Tre chiese nel centro storico di Napoli: Sant’Arcangelo agli Armieri, Sant’Eligio Maggiore e San Giovanni a mare.",
+      "Sant'Eligio Maggiore a Napoli: comunità parrocchiale nel centro storico con Sant'Arcangelo agli Armieri e San Giovanni a mare. Messe, orari e avvisi.",
     images: ["/Logo-comunita.png"],
   },
   verification: {

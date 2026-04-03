@@ -30,6 +30,14 @@ export type Parrocchia = {
   facebookPageUrl?: string;
   /** URL specifico per plugin Facebook (se diverso dalla pagina pubblica) */
   facebookPageEmbedHref?: string;
+  /** Titolo scheda senza template layout (evita suffissi ridondanti) */
+  metaTitleAbsolute?: string;
+  /** Meta description dedicata (oltre al testo “La chiesa” in pagina) */
+  metaDescription?: string;
+  /** Per schema.org Church — varianti del nome */
+  schemaAlternateNames?: string[];
+  /** Parole chiave opzionali per la pagina chiesa */
+  metaKeywords?: string[];
 };
 
 const arcangeloInterno = "/arcangelo-agli-armieri/Sant-Arcangelo-Armieri.jpg";
@@ -178,6 +186,23 @@ export const parrocchie: Parrocchia[] = [
     facebookPageUrl:
       "https://www.facebook.com/people/Chiesa-di-SantEligio/61587835687714/",
     facebookPageEmbedHref: "https://www.facebook.com/61587835687714",
+    metaTitleAbsolute:
+      "Sant'Eligio Maggiore — Chiesa e parrocchia Napoli centro storico",
+    metaDescription:
+      "Chiesa di Sant'Eligio Maggiore in Via S. Eligio, Napoli: architettura gotica medievale, comunità parrocchiale nel centro storico. Orari delle messe, storia e come arrivare.",
+    schemaAlternateNames: [
+      "Chiesa di Sant'Eligio Maggiore",
+      "Parrocchia Sant'Eligio Maggiore Napoli",
+      "Sant'Eligio Maggiore Napoli",
+    ],
+    metaKeywords: [
+      "Sant'Eligio Maggiore",
+      "Sant'Eligio Maggiore Napoli",
+      "chiesa Sant'Eligio",
+      "parrocchia Sant'Eligio Napoli",
+      "chiesa gotica Napoli",
+      "centro storico Napoli",
+    ],
   },
   {
     slug: "san-giovanni-a-mare",

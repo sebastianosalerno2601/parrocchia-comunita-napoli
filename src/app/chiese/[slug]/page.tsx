@@ -18,6 +18,17 @@ type PageProps = {
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://santeligiomaggiore.it";
 const baseUrl = siteUrl.replace(/\/$/, "");
 
+/** Allineato a `metadata.title.template` in `layout.tsx` */
+const TITLE_TEMPLATE_SUFFIX = "Sant'Eligio Maggiore e comunità Napoli";
+
+function resolveFullTitle(p: {
+  nomeCompleto: string;
+  metaTitleAbsolute?: string;
+}): string {
+  if (p.metaTitleAbsolute) return p.metaTitleAbsolute;
+  return `${p.nomeCompleto} | ${TITLE_TEMPLATE_SUFFIX}`;
+}
+
 export function generateStaticParams() {
   return parrocchie.map((p) => ({ slug: p.slug }));
 }
@@ -29,9 +40,14 @@ export async function generateMetadata({
   const p = getParrocchiaBySlug(slug);
   if (!p) return { title: "Chiesa" };
   const canonical = `/chiese/${p.slug}`;
+  const description = p.metaDescription ?? p.descrizione;
+  const fullTitle = resolveFullTitle(p);
   return {
-    title: p.nomeCompleto,
-    description: p.descrizione,
+    title: p.metaTitleAbsolute
+      ? { absolute: p.metaTitleAbsolute }
+      : p.nomeCompleto,
+    description,
+    ...(p.metaKeywords?.length ? { keywords: p.metaKeywords } : {}),
     alternates: {
       canonical,
     },
@@ -39,8 +55,8 @@ export async function generateMetadata({
       type: "article",
       locale: "it_IT",
       url: `${baseUrl}${canonical}`,
-      title: p.nomeCompleto,
-      description: p.descrizione,
+      title: fullTitle,
+      description,
       images: [
         {
           url: p.bannerRow[0].src,
@@ -50,8 +66,8 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: p.nomeCompleto,
-      description: p.descrizione,
+      title: fullTitle,
+      description,
       images: [p.bannerRow[0].src],
     },
   };
@@ -81,8 +97,11 @@ export default async function ChiesaPage({ params }: PageProps) {
     "@context": "https://schema.org",
     "@type": "Church",
     name: p.nomeCompleto,
+    ...(p.schemaAlternateNames?.length
+      ? { alternateName: p.schemaAlternateNames }
+      : {}),
     address: p.indirizzo,
-    description: p.descrizione,
+    description: p.metaDescription ?? p.descrizione,
     url: `${baseUrl}/chiese/${p.slug}`,
     image: p.bannerRow[0]?.src
       ? `${baseUrl}${p.bannerRow[0].src}`
