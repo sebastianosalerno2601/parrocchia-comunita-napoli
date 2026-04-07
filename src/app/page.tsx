@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { parrocchie } from "@/lib/parrocchie";
-import IntroPopup from "@/components/IntroPopup";
+import MessaCardBattagliaPopup from "@/components/MessaCardBattagliaPopup";
 
 const temaEtichetta: Record<string, string> = {
   barocco: "Barocco — oro e marmi",
@@ -40,7 +40,7 @@ export default function Home() {
         // JSON-LD aiuta Google a comprendere meglio entità e sito.
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <IntroPopup />
+      <MessaCardBattagliaPopup />
       <section className="relative overflow-hidden px-4 pb-16 pt-14 md:pb-24 md:pt-20">
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.35]"
@@ -81,39 +81,6 @@ export default function Home() {
             mare: chiese diverse per storia e architettura, unite nella stessa
             missione.
           </p>
-        </div>
-      </section>
-
-      {/* Dopo Pasqua: rimuovere questa section e la cartella public/video-pasqua */}
-      <section
-        className="mx-auto w-full max-w-4xl px-4 pb-12"
-        aria-labelledby="messaggio-pasqua-titolo"
-      >
-        <div className="rounded-2xl border border-[var(--nav-border)] bg-gradient-to-b from-[#fffefb] to-[var(--paper-deep)] p-6 shadow-sm md:p-8">
-          <p className="font-display text-center text-sm font-semibold uppercase tracking-[0.3em] text-[var(--accent)]">
-            Pasqua
-          </p>
-          <h2
-            id="messaggio-pasqua-titolo"
-            className="font-display mt-3 text-center text-2xl font-semibold text-[var(--ink)] md:text-3xl"
-          >
-            Messaggio di Pasqua del parroco
-          </h2>
-          <p className="mx-auto mt-3 max-w-xl text-center text-[var(--ink-muted)]">
-            Auguri di buona Pasqua alla comunità dalle nostre parrocchie.
-          </p>
-          <div className="mt-6 overflow-hidden rounded-xl border border-[var(--nav-border)] bg-black shadow-md">
-            <video
-              className="aspect-video w-full object-contain"
-              controls
-              playsInline
-              preload="metadata"
-              title="Messaggio di Pasqua del parroco — auguri alla comunità"
-            >
-              <source src="/video-pasqua/messaggio-pasqua.mp4" type="video/mp4" />
-              Il tuo browser non supporta la riproduzione video; puoi scaricare il file dalla stessa pagina se il browser lo consente.
-            </video>
-          </div>
         </div>
       </section>
 
