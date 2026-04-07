@@ -79,12 +79,12 @@ export default function MessaCardBattagliaPopup({
 
   return (
     <div
-      className="fixed inset-0 z-[250] flex max-h-[100dvh] items-end justify-center overflow-hidden bg-black/60 p-0 backdrop-blur-[2px] sm:items-center sm:p-4"
+      className="fixed inset-0 z-[250] flex max-h-[100dvh] items-center justify-center overflow-hidden bg-black/60 p-4 backdrop-blur-[2px]"
       role="dialog"
       aria-modal="true"
       aria-label="S.messa Card.Battaglia"
     >
-      <div className="relative z-10 flex w-full max-w-3xl flex-col overflow-hidden rounded-t-2xl border border-[var(--nav-border)] bg-[var(--paper)] shadow-2xl max-sm:max-h-[min(88dvh,calc(100dvh-env(safe-area-inset-top,0px)-env(safe-area-inset-bottom,0px)-0.75rem))] sm:max-h-[min(92dvh,900px)] sm:rounded-2xl">
+      <div className="relative z-10 flex w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-[var(--nav-border)] bg-[var(--paper)] shadow-2xl max-h-[min(92dvh,900px)]">
         <header className="sticky top-0 z-20 flex shrink-0 items-start justify-between gap-3 border-b border-[var(--nav-border)] bg-[var(--paper)] px-4 py-3 pt-[max(1rem,env(safe-area-inset-top,0px))] sm:pt-4">
           <h2 className="font-display text-base font-semibold text-[var(--ink)]">
             S.messa Card.Battaglia
@@ -103,7 +103,7 @@ export default function MessaCardBattagliaPopup({
             <img
               src={IMAGE_SRC}
               alt="S.messa Card.Battaglia"
-              className="w-full rounded-xl border border-[var(--nav-border)] bg-white"
+              className="mx-auto w-full max-w-2xl rounded-xl border border-[var(--nav-border)] bg-white"
             />
           ) : (
             <div className="rounded-xl border border-[var(--nav-border)] bg-[var(--paper-deep)]/50 p-5">
