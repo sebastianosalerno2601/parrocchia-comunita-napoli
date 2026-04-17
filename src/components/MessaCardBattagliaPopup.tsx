@@ -2,11 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 
-const SESSION_KEY = "messa-card-battaglia-popup-handled";
 const IMAGE_SRC = "/messa-da-sua-eminenza.webp";
 
 export default function MessaCardBattagliaPopup({
-  triggerLabel = "S.messa Card.Battaglia",
+  triggerLabel = "Papa Leone XIV a Napoli",
   triggerClassName = "nav-pill font-display text-lg font-medium self-center w-fit",
 }: {
   triggerLabel?: string;
@@ -19,17 +18,9 @@ export default function MessaCardBattagliaPopup({
   const timerRef = useRef<number | null>(null);
 
   useEffect(() => {
-    const shouldShow = (() => {
-      try {
-        return !window.sessionStorage.getItem(SESSION_KEY);
-      } catch {
-        return true;
-      }
-    })();
-
     const t = window.setTimeout(() => {
       setMounted(true);
-      setOpen(shouldShow);
+      setOpen(true);
     }, 0);
 
     return () => window.clearTimeout(t);
@@ -54,11 +45,6 @@ export default function MessaCardBattagliaPopup({
     setAskContinue(false);
     setHasAskedOnce(true);
     if (!handled) return;
-    try {
-      window.sessionStorage.setItem(SESSION_KEY, "1");
-    } catch {
-      // No-op: senza sessionStorage il comportamento resta best effort.
-    }
   };
 
   const openManual = () => {
@@ -82,12 +68,12 @@ export default function MessaCardBattagliaPopup({
       className="fixed inset-0 z-[250] flex max-h-[100dvh] items-center justify-center overflow-hidden bg-black/60 p-4 backdrop-blur-[2px]"
       role="dialog"
       aria-modal="true"
-      aria-label="S.messa Card.Battaglia"
+      aria-label="Papa Leone XIV a Napoli"
     >
       <div className="relative z-10 flex w-full max-w-3xl flex-col overflow-hidden rounded-2xl border border-[var(--nav-border)] bg-[var(--paper)] shadow-2xl max-h-[min(92dvh,900px)]">
         <header className="sticky top-0 z-20 flex shrink-0 items-start justify-between gap-3 border-b border-[var(--nav-border)] bg-[var(--paper)] px-4 py-3 pt-[max(1rem,env(safe-area-inset-top,0px))] sm:pt-4">
           <h2 className="font-display text-base font-semibold text-[var(--ink)]">
-            S.messa Card.Battaglia
+            Papa Leone XIV a Napoli
           </h2>
           <button
             type="button"
@@ -102,7 +88,7 @@ export default function MessaCardBattagliaPopup({
           {!askContinue ? (
             <img
               src={IMAGE_SRC}
-              alt="S.messa Card.Battaglia"
+              alt="Papa Leone XIV a Napoli"
               className="mx-auto w-full max-w-2xl rounded-xl border border-[var(--nav-border)] bg-white"
             />
           ) : (
