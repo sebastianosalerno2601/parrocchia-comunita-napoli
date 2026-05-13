@@ -211,28 +211,27 @@ export default async function ChiesaPage({ params }: PageProps) {
         ) : null}
 
         <div className="mx-auto mt-10 grid w-full max-w-5xl gap-8 lg:grid-cols-2 lg:items-stretch">
-          <div className="w-full max-w-[500px] justify-self-center">
+          <div className="flex h-full w-full max-w-[500px] flex-col justify-self-center">
             <VangeloDelGiornoSection
-              className="mt-0 h-full"
-              iframeClassName="h-[700px]"
+              className="mt-0 flex min-h-0 flex-1 flex-col"
+              frameClassName="h-[685px]"
+              iframeClassName="h-full w-full min-h-0 border-0"
             />
           </div>
 
           {facebookFeedSrc ? (
-            <div className="w-full max-w-[500px] justify-self-center">
+            <div className="flex h-full w-full max-w-[500px] flex-col justify-self-center">
               <h2 className="font-display text-center text-xl font-semibold text-[var(--ink)]">
                 Pagina Facebook ufficiale
               </h2>
-              <div className="mt-4 overflow-hidden rounded-xl border border-[var(--nav-border)] bg-[var(--paper-deep)] shadow-sm">
-                <div className="mx-auto w-full">
-                  <iframe
-                    title={`Facebook — ${p.nomeCompleto}`}
-                    src={facebookFeedSrc}
-                    className="h-[685px] w-full border-0"
-                    loading="lazy"
-                    allow="encrypted-media; clipboard-write; web-share"
-                  />
-                </div>
+              <div className="mt-4 h-[685px] overflow-hidden rounded-xl border border-[var(--nav-border)] bg-[var(--paper-deep)] shadow-sm">
+                <iframe
+                  title={`Facebook — ${p.nomeCompleto}`}
+                  src={facebookFeedSrc}
+                  className="h-full w-full min-h-0 border-0"
+                  loading="lazy"
+                  allow="encrypted-media; clipboard-write; web-share"
+                />
               </div>
             </div>
           ) : null}

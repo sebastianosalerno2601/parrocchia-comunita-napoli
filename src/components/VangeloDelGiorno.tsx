@@ -4,10 +4,20 @@ const LINK_ABBONAMENTO = "https://evangeli.net/vangelo/abbonamento";
 
 type Props = {
   className?: string;
+  /** Classi aggiuntive sul contenitore con bordo (es. altezza fissa per allineare altri iframe) */
+  frameClassName?: string;
   iframeClassName?: string;
 };
 
-export function VangeloDelGiornoSection({ className, iframeClassName }: Props) {
+export function VangeloDelGiornoSection({
+  className,
+  frameClassName,
+  iframeClassName,
+}: Props) {
+  const iframeClasses = iframeClassName?.trim().length
+    ? iframeClassName
+    : "h-[min(75vh,720px)] w-full border-0";
+
   return (
     <section
       className={className}
@@ -19,13 +29,18 @@ export function VangeloDelGiornoSection({ className, iframeClassName }: Props) {
       >
         Vangelo del giorno
       </h2>
-      <div className="mt-4 overflow-hidden rounded-xl border border-[var(--nav-border)] bg-[var(--paper)] shadow-sm">
+      <div
+        className={[
+          "mt-4 overflow-hidden rounded-xl border border-[var(--nav-border)] bg-[var(--paper)] shadow-sm",
+          frameClassName,
+        ]
+          .filter(Boolean)
+          .join(" ")}
+      >
         <iframe
           src={WIDGET_SRC}
           title="Vangelo del giorno — Evangeli.net"
-          className={["h-[min(75vh,720px)] w-full border-0", iframeClassName]
-            .filter(Boolean)
-            .join(" ")}
+          className={iframeClasses}
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
         />
