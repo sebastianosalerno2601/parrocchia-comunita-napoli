@@ -1,9 +1,25 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { listEventi } from "@/lib/eventi-store";
 import { sortProssimiPassati } from "@/lib/eventi-sort";
 import { EventiCarousel } from "@/components/EventiCarousel";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Eventi",
+  description:
+    "Calendario eventi della comunità parrocchiale Napoli centro storico: Sant'Eligio Maggiore, Sant'Arcangelo agli Armieri, San Giovanni a mare. Celebrazioni e iniziative.",
+  alternates: {
+    canonical: "/eventi",
+  },
+  openGraph: {
+    title: "Eventi — Comunità parrocchiale Napoli",
+    description:
+      "Appuntamenti e attività delle parrocchie del centro storico di Napoli.",
+    url: "/eventi",
+  },
+};
 
 export default async function EventiPage() {
   const eventi = await listEventi();

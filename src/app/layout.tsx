@@ -82,9 +82,9 @@ export const metadata: Metadata = {
     google: process.env.GOOGLE_SITE_VERIFICATION,
   },
   icons: {
-    icon: "/public/favicon.ico?v=2",
-    shortcut: "/public/favicon.ico?v=2",
-    apple: "/public/Logo-comunita.png",
+    icon: "/favicon.ico?v=2",
+    shortcut: "/favicon.ico?v=2",
+    apple: "/Logo-comunita.png",
   },
 };
 

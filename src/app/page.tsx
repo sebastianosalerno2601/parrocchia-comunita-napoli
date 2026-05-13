@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { parrocchie } from "@/lib/parrocchie";
+import { buildHomePageJsonLd } from "@/lib/seo-home-jsonld";
 
 const temaEtichetta: Record<string, string> = {
   barocco: "Barocco — oro e marmi",
@@ -11,26 +12,7 @@ const temaEtichetta: Record<string, string> = {
 export default function Home() {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://santeligiomaggiore.it";
   const base = siteUrl.replace(/\/$/, "");
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "Sant'Eligio Maggiore — Comunità parrocchiale Napoli",
-    alternateName: [
-      "Comunità parrocchiale Napoli",
-      "Chiesa di Sant'Eligio Maggiore Napoli",
-      "Parrocchia Sant'Eligio Maggiore",
-    ],
-    url: base,
-    inLanguage: "it-IT",
-    publisher: {
-      "@type": "Organization",
-      name: "Sant'Eligio Maggiore — Comunità parrocchiale Napoli",
-      logo: {
-        "@type": "ImageObject",
-        url: `${base}/Logo-comunita.png`,
-      },
-    },
-  };
+  const jsonLd = buildHomePageJsonLd(base);
 
   return (
     <main className="flex flex-1 flex-col">
