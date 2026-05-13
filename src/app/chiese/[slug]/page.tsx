@@ -4,7 +4,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ParrocchiaStoria } from "@/components/ParrocchiaStoria";
 import { VangeloDelGiornoSection } from "@/components/VangeloDelGiorno";
-import MessaCardBattagliaPopup from "@/components/MessaCardBattagliaPopup";
 import { OrariChiese } from "@/components/OrariChiese";
 import {
   getParrocchiaBySlug,
@@ -144,7 +143,6 @@ export default async function ChiesaPage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <MessaCardBattagliaPopup />
       <figure className="relative isolate mt-4 w-full overflow-hidden bg-gradient-to-b from-[var(--paper-deep)] via-[var(--paper)] to-[var(--paper)] px-3 pt-5 pb-1 sm:mt-5 sm:px-6 sm:pt-6 md:mt-0">
         <div className="relative mx-auto max-w-6xl">
           <div className="banner-marquee-track">

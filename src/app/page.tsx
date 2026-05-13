@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import { parrocchie } from "@/lib/parrocchie";
-import MessaCardBattagliaPopup from "@/components/MessaCardBattagliaPopup";
 
 const temaEtichetta: Record<string, string> = {
   barocco: "Barocco — oro e marmi",
@@ -40,7 +39,6 @@ export default function Home() {
         // JSON-LD aiuta Google a comprendere meglio entità e sito.
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <MessaCardBattagliaPopup />
       <section className="relative overflow-hidden px-4 pb-16 pt-14 md:pb-24 md:pt-20">
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.35]"
