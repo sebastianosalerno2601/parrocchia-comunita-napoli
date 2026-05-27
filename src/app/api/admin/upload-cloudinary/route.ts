@@ -50,7 +50,10 @@ export async function POST(req: Request) {
   out.append("folder", "eventi");
 
   const basic = Buffer.from(`${apiKey}:${apiSecret}`, "utf8").toString("base64");
-  const resourceType = file.type?.startsWith("video/") ? "video" : "image";
+  const name = file instanceof File ? file.name.toLowerCase() : "";
+  const isVideoMime = file.type?.startsWith("video/") ?? false;
+  const isVideoExt = /\.(mp4|mov|webm|m4v|avi|mkv|mpeg|mpg|3gp)$/i.test(name);
+  const resourceType = isVideoMime || isVideoExt ? "video" : "image";
   const url = `https://api.cloudinary.com/v1_1/${encodeURIComponent(cloudName)}/${resourceType}/upload`;
 
   const cRes = await fetch(url, {

@@ -116,6 +116,37 @@ export async function saveEvento(
   };
 
   const supabase = getSupabaseAdmin();
+  let createdAt = payload.createdAt;
+  if (item.id) {
+    const { data: existing } = await supabase
+      .from("eventi")
+      .select("created_at")
+      .eq("id", id)
+      .maybeSingle();
+    if (existing?.created_at) {
+      createdAt = existing.created_at as string;
+      payload.createdAt = createdAt;
+    }
+  }
+
+  const hasVideos = (payload.videoUrls?.length ?? 0) > 0;
+
+  async function persistVideosOrThrow() {
+    if (!hasVideos) return;
+    const { error } = await supabase
+      .from("eventi")
+      .update({
+        video_urls: payload.videoUrls,
+        video_public_ids: payload.videoPublicIds,
+      })
+      .eq("id", id);
+    if (error) {
+      throw new Error(
+        `L'evento è stato salvato ma i video non sono stati registrati nel database: ${error.message}. Controlla le colonne video_urls e video_public_ids in Supabase, poi salva di nuovo.`,
+      );
+    }
+  }
+
   const baseRow = {
     id: payload.id,
     titolo: payload.titolo,
@@ -124,7 +155,7 @@ export async function saveEvento(
     luogo: payload.luogo ?? null,
     image_url: payload.imageUrl,
     image_public_id: payload.imagePublicId ?? null,
-    created_at: payload.createdAt,
+    created_at: createdAt,
   };
 
   const withFlagsRow = {
@@ -145,19 +176,39 @@ export async function saveEvento(
     .from("eventi")
     .upsert(withGalleryRow, { onConflict: "id" });
 
-  if (firstTry.error) {
-    // Compatibilità con schema intermedio: ha is_upcoming/is_past ma non gallery json.
-    const fallbackFlags = await supabase
-      .from("eventi")
-      .upsert(withFlagsRow, { onConflict: "id" });
-    if (!fallbackFlags.error) return payload;
-
-    // Compatibilità schema vecchio: solo campi base.
-    const fallbackBase = await supabase
-      .from("eventi")
-      .upsert(baseRow, { onConflict: "id" });
-    if (fallbackBase.error) throw new Error(fallbackBase.error.message);
+  if (!firstTry.error) {
+    return payload;
   }
+
+  // Primo tentativo fallito: salva senza video e riprova solo i campi video (evita perdita silenziosa).
+  const withoutVideos = { ...withGalleryRow };
+  delete (withoutVideos as { video_urls?: string[] }).video_urls;
+  delete (withoutVideos as { video_public_ids?: string[] }).video_public_ids;
+
+  const galleryRetry = await supabase
+    .from("eventi")
+    .upsert(withoutVideos, { onConflict: "id" });
+
+  if (!galleryRetry.error) {
+    await persistVideosOrThrow();
+    return payload;
+  }
+
+  // Compatibilità con schema intermedio: ha is_upcoming/is_past ma non gallery json.
+  const fallbackFlags = await supabase
+    .from("eventi")
+    .upsert(withFlagsRow, { onConflict: "id" });
+  if (!fallbackFlags.error) {
+    await persistVideosOrThrow();
+    return payload;
+  }
+
+  // Compatibilità schema vecchio: solo campi base.
+  const fallbackBase = await supabase
+    .from("eventi")
+    .upsert(baseRow, { onConflict: "id" });
+  if (fallbackBase.error) throw new Error(fallbackBase.error.message);
+  await persistVideosOrThrow();
 
   return payload;
 }

@@ -278,6 +278,9 @@ export default function AdminEventiPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Salvataggio evento fallito.");
 
+      const wasEditing = !!editingId;
+      const savedVideoCount = allVideos.length;
+
       setTitolo("");
       setDescrizione("");
       setDataIso("");
@@ -292,7 +295,15 @@ export default function AdminEventiPage() {
       setVideoInputKey((k) => k + 1);
       setRemovedExistingVideoIndices([]);
       setEditingId(null);
-      setMsg(editingId ? "Evento aggiornato con successo." : "Evento creato con successo.");
+      setMsg(
+        wasEditing
+          ? savedVideoCount > 0
+            ? `Evento aggiornato con successo (${savedVideoCount} video).`
+            : "Evento aggiornato con successo."
+          : savedVideoCount > 0
+            ? `Evento creato con successo (${savedVideoCount} video).`
+            : "Evento creato con successo.",
+      );
       await loadEventi();
     } catch (err) {
       setMsg(err instanceof Error ? err.message : "Errore imprevisto.");
