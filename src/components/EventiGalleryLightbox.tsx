@@ -21,6 +21,8 @@ export function EventiGalleryLightbox({
   title: string;
 }) {
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
+  const [downloadingAll, setDownloadingAll] = useState(false);
+  const [lightboxLoaded, setLightboxLoaded] = useState(false);
   const hasSingleImage = images.length === 1;
 
   const safeImages = useMemo(() => images.filter(Boolean), [images]);
@@ -33,6 +35,30 @@ export function EventiGalleryLightbox({
       `${title}-foto-${idx + 1}`,
     )}`;
 
+  const downloadAll = async () => {
+    if (downloadingAll) return;
+    setDownloadingAll(true);
+    try {
+      const res = await fetch("/api/download-images-zip", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ urls: safeImages, title }),
+      });
+      if (!res.ok) return;
+      const blob = await res.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = objectUrl;
+      a.download = `${title}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(objectUrl);
+    } finally {
+      setDownloadingAll(false);
+    }
+  };
+
   const prev = () => {
     if (activeIdx === null) return;
     setActiveIdx((activeIdx - 1 + safeImages.length) % safeImages.length);
@@ -44,9 +70,20 @@ export function EventiGalleryLightbox({
 
   return (
     <>
+      <div className="mt-8 flex w-full justify-center">
+        <button
+          type="button"
+          onClick={downloadAll}
+          disabled={downloadingAll}
+          className="w-full max-w-md rounded-2xl bg-[var(--accent)] px-6 py-4 text-lg font-semibold text-[var(--paper)] shadow-sm transition-opacity hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto sm:px-7"
+        >
+          {downloadingAll ? "Preparazione download..." : "Scarica tutte le foto"}
+        </button>
+      </div>
+
       <section
         className={[
-          "mt-8 grid gap-4",
+          "mt-6 grid gap-4",
           hasSingleImage ? "mx-auto max-w-3xl grid-cols-1" : "sm:grid-cols-2",
         ].join(" ")}
       >
@@ -54,7 +91,10 @@ export function EventiGalleryLightbox({
           <figure key={`${img}-${idx}`} className="space-y-2">
             <button
               type="button"
-              onClick={() => setActiveIdx(idx)}
+              onClick={() => {
+                setLightboxLoaded(false);
+                setActiveIdx(idx);
+              }}
               className="block w-full text-left"
               title="Apri immagine"
             >
@@ -69,15 +109,6 @@ export function EventiGalleryLightbox({
                 ].join(" ")}
               />
             </button>
-            <div className="flex justify-end">
-              <a
-                href={downloadHref(img, idx)}
-                download
-                className="rounded-lg border border-[var(--nav-border)] bg-[var(--paper)] px-3 py-1.5 text-xs font-medium text-[var(--ink-muted)] transition-colors hover:bg-[var(--paper-deep)] hover:text-[var(--ink)]"
-              >
-                Download
-              </a>
-            </div>
           </figure>
         ))}
       </section>
@@ -106,17 +137,47 @@ export function EventiGalleryLightbox({
             </button>
           ) : null}
 
-          <img
-            src={withCloudinaryAuto(current, 2200)}
-            alt={title}
-            className="max-h-[90vh] max-w-[95vw] rounded-xl object-contain"
-          />
+          <div className="relative">
+            {!lightboxLoaded ? (
+              <div className="absolute inset-0 z-10 flex min-h-[12rem] items-center justify-center rounded-xl bg-black/30 backdrop-blur-[1px]">
+                <div className="flex flex-col items-center gap-3 px-4 text-center text-white">
+                  <span
+                    aria-hidden
+                    className="h-8 w-8 animate-spin rounded-full border-2 border-white/70 border-r-transparent"
+                  />
+                  <p className="text-sm font-medium">Caricamento immagine…</p>
+                </div>
+              </div>
+            ) : null}
+            <img
+              src={withCloudinaryAuto(current, 2200)}
+              alt={title}
+              onLoad={() => setLightboxLoaded(true)}
+              className={[
+                "max-h-[90vh] max-w-[95vw] rounded-xl object-contain",
+                lightboxLoaded ? "opacity-100" : "opacity-0",
+              ].join(" ")}
+            />
+          </div>
+
+          {activeIdx !== null ? (
+            <a
+              href={downloadHref(current, activeIdx)}
+              download
+              className="absolute bottom-4 right-4 rounded-full border border-white/30 bg-black/30 px-4 py-2 text-sm font-medium text-white backdrop-blur hover:bg-white/10"
+            >
+              Scarica
+            </a>
+          ) : null}
 
           {safeImages.length > 1 ? (
             <button
               type="button"
               className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full border border-white/30 px-3 py-2 text-white hover:bg-white/10"
-              onClick={next}
+              onClick={() => {
+                setLightboxLoaded(false);
+                next();
+              }}
               aria-label="Immagine successiva"
             >
               →

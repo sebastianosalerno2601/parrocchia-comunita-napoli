@@ -70,6 +70,7 @@ export default async function EventoDettaglioPage({ params }: PageProps) {
   if (!evento) notFound();
 
   const images = evento.imageUrls?.length ? evento.imageUrls : [evento.imageUrl];
+  const videos = evento.videoUrls?.filter(Boolean) ?? [];
   const eventJsonLd = {
     "@context": "https://schema.org",
     "@type": "Event",
@@ -152,6 +153,31 @@ export default async function EventoDettaglioPage({ params }: PageProps) {
       </article>
 
       <EventiGalleryLightbox images={images} title={evento.titolo} />
+
+      {videos.length > 0 ? (
+        <section className="mx-auto mt-10 max-w-3xl">
+          <h2 className="font-display text-center text-2xl font-semibold text-[var(--ink)]">
+            Video dell’evento
+          </h2>
+          <div className="mt-4 space-y-4">
+            {videos.map((src, i) => (
+              <div
+                key={`${src}-${i}`}
+                className="overflow-hidden rounded-2xl border border-[var(--nav-border)] bg-black shadow-sm"
+              >
+                <video
+                  controls
+                  playsInline
+                  preload="metadata"
+                  className="aspect-video w-full object-contain"
+                >
+                  <source src={src} />
+                </video>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <p className="mt-10 text-center">
         <Link

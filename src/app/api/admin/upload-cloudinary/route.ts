@@ -50,7 +50,8 @@ export async function POST(req: Request) {
   out.append("folder", "eventi");
 
   const basic = Buffer.from(`${apiKey}:${apiSecret}`, "utf8").toString("base64");
-  const url = `https://api.cloudinary.com/v1_1/${encodeURIComponent(cloudName)}/image/upload`;
+  const resourceType = file.type?.startsWith("video/") ? "video" : "image";
+  const url = `https://api.cloudinary.com/v1_1/${encodeURIComponent(cloudName)}/${resourceType}/upload`;
 
   const cRes = await fetch(url, {
     method: "POST",

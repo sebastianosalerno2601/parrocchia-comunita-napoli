@@ -22,6 +22,8 @@ export async function POST(req: Request) {
       imagePublicId?: string;
       imageUrls?: string[];
       imagePublicIds?: string[];
+      videoUrls?: string[];
+      videoPublicIds?: string[];
     };
 
     if (!body.titolo || !body.descrizione || !body.dataIso || !body.imageUrl) {
@@ -55,6 +57,8 @@ export async function POST(req: Request) {
       imagePublicId: body.imagePublicId,
       imageUrls: body.imageUrls?.filter(Boolean),
       imagePublicIds: body.imagePublicIds?.filter(Boolean),
+      videoUrls: body.videoUrls?.filter(Boolean),
+      videoPublicIds: body.videoPublicIds?.filter(Boolean),
     });
 
     return NextResponse.json({ ok: true, evento: saved });

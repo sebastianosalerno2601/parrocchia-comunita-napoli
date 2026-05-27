@@ -12,6 +12,8 @@ export type EventoItem = {
   imagePublicId?: string;
   imageUrls?: string[];
   imagePublicIds?: string[];
+  videoUrls?: string[];
+  videoPublicIds?: string[];
   createdAt: string;
 };
 
@@ -30,6 +32,12 @@ export async function listEventi(): Promise<EventoItem[]> {
       : [];
     const imagePublicIds = Array.isArray(row.image_public_ids)
       ? (row.image_public_ids as string[]).filter(Boolean)
+      : [];
+    const videoUrls = Array.isArray(row.video_urls)
+      ? (row.video_urls as string[]).filter(Boolean)
+      : [];
+    const videoPublicIds = Array.isArray(row.video_public_ids)
+      ? (row.video_public_ids as string[]).filter(Boolean)
       : [];
 
     const imageUrlFallback = (row.image_url as string | null) ?? "";
@@ -79,6 +87,8 @@ export async function listEventi(): Promise<EventoItem[]> {
         : row.image_public_id
           ? [row.image_public_id as string]
           : [],
+    videoUrls,
+    videoPublicIds,
     createdAt: row.created_at as string,
     };
   });
@@ -101,6 +111,8 @@ export async function saveEvento(
     createdAt: new Date().toISOString(),
     imageUrls: item.imageUrls?.filter(Boolean) ?? [item.imageUrl],
     imagePublicIds: item.imagePublicIds?.filter(Boolean) ?? [],
+    videoUrls: item.videoUrls?.filter(Boolean) ?? [],
+    videoPublicIds: item.videoPublicIds?.filter(Boolean) ?? [],
   };
 
   const supabase = getSupabaseAdmin();
@@ -125,6 +137,8 @@ export async function saveEvento(
     ...withFlagsRow,
     image_urls: payload.imageUrls ?? [payload.imageUrl],
     image_public_ids: payload.imagePublicIds ?? [],
+    video_urls: payload.videoUrls ?? [],
+    video_public_ids: payload.videoPublicIds ?? [],
   };
 
   const firstTry = await supabase

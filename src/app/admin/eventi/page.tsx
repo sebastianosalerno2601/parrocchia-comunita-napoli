@@ -14,6 +14,8 @@ type AdminEvento = {
   imageUrl: string;
   imageUrls?: string[];
   imagePublicIds?: string[];
+  videoUrls?: string[];
+  videoPublicIds?: string[];
 };
 
 function cloudinaryThumb(url: string, size = 120) {
@@ -47,7 +49,10 @@ export default function AdminEventiPage() {
   const [coverInputKey, setCoverInputKey] = useState(0);
   const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
   const [galleryInputKey, setGalleryInputKey] = useState(0);
+  const [videoFiles, setVideoFiles] = useState<File[]>([]);
+  const [videoInputKey, setVideoInputKey] = useState(0);
   const [removedExistingIndices, setRemovedExistingIndices] = useState<number[]>([]);
+  const [removedExistingVideoIndices, setRemovedExistingVideoIndices] = useState<number[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [eventi, setEventi] = useState<AdminEvento[]>([]);
@@ -76,12 +81,30 @@ export default function AdminEventiPage() {
     return list.filter(Boolean);
   }, [editingId, eventi]);
 
+  const existingVideosOrdered = useMemo(() => {
+    if (!editingId) return [];
+    const ev = eventi.find((e) => e.id === editingId);
+    if (!ev) return [];
+    const list = ev.videoUrls?.length ? ev.videoUrls : [];
+    return list.filter(Boolean);
+  }, [editingId, eventi]);
+
   function isExistingIndexRemoved(i: number) {
     return removedExistingIndices.includes(i);
   }
 
   function toggleExistingRemoval(i: number) {
     setRemovedExistingIndices((prev) =>
+      prev.includes(i) ? prev.filter((x) => x !== i) : [...prev, i],
+    );
+  }
+
+  function isExistingVideoIndexRemoved(i: number) {
+    return removedExistingVideoIndices.includes(i);
+  }
+
+  function toggleExistingVideoRemoval(i: number) {
+    setRemovedExistingVideoIndices((prev) =>
       prev.includes(i) ? prev.filter((x) => x !== i) : [...prev, i],
     );
   }
@@ -174,11 +197,22 @@ export default function AdminEventiPage() {
         }))
         .filter((_, i) => !removedExistingIndices.includes(i));
 
+      const existingVideoUrls = current?.videoUrls?.length ? current.videoUrls : [];
+      const existingVideoPublicIds = current?.videoPublicIds ?? [];
+      const keptVideoPairs = existingVideoUrls
+        .map((url, i) => ({
+          secure_url: url,
+          public_id: existingVideoPublicIds[i] ?? "",
+        }))
+        .filter((_, i) => !removedExistingVideoIndices.includes(i));
+
       const uploadedCover = coverFile
         ? await uploadFilesWithCloudinary([coverFile])
         : [];
       const uploadedGallery =
         galleryFiles.length > 0 ? await uploadFilesWithCloudinary(galleryFiles) : [];
+      const uploadedVideos =
+        videoFiles.length > 0 ? await uploadFilesWithCloudinary(videoFiles) : [];
 
       let coverUrl: string;
       let coverPublicId: string;
@@ -212,6 +246,10 @@ export default function AdminEventiPage() {
       }
 
       const allImages = [{ secure_url: coverUrl, public_id: coverPublicId }, ...remainder];
+      const allVideos = [
+        ...keptVideoPairs,
+        ...uploadedVideos.map((u) => ({ secure_url: u.secure_url, public_id: u.public_id })),
+      ];
 
       const res = await fetch("/api/admin/events", {
         method: "POST",
@@ -233,6 +271,8 @@ export default function AdminEventiPage() {
           imagePublicIds: allImages
             .map((u) => u.public_id as string)
             .filter(Boolean),
+          videoUrls: allVideos.map((u) => u.secure_url as string),
+          videoPublicIds: allVideos.map((u) => u.public_id as string).filter(Boolean),
         }),
       });
       const data = await res.json();
@@ -248,6 +288,9 @@ export default function AdminEventiPage() {
       setGalleryFiles([]);
       setGalleryInputKey((k) => k + 1);
       setRemovedExistingIndices([]);
+      setVideoFiles([]);
+      setVideoInputKey((k) => k + 1);
+      setRemovedExistingVideoIndices([]);
       setEditingId(null);
       setMsg(editingId ? "Evento aggiornato con successo." : "Evento creato con successo.");
       await loadEventi();
@@ -270,6 +313,9 @@ export default function AdminEventiPage() {
     setGalleryFiles([]);
     setGalleryInputKey((k) => k + 1);
     setRemovedExistingIndices([]);
+    setVideoFiles([]);
+    setVideoInputKey((k) => k + 1);
+    setRemovedExistingVideoIndices([]);
     setMsg(`Stai modificando: ${ev.titolo}`);
   }
 
@@ -285,6 +331,9 @@ export default function AdminEventiPage() {
     setGalleryFiles([]);
     setGalleryInputKey((k) => k + 1);
     setRemovedExistingIndices([]);
+    setVideoFiles([]);
+    setVideoInputKey((k) => k + 1);
+    setRemovedExistingVideoIndices([]);
     setMsg("Modifica annullata.");
   }
 
@@ -538,6 +587,102 @@ export default function AdminEventiPage() {
                     className="text-xs font-medium text-[var(--ink-muted)] underline-offset-2 hover:underline"
                   >
                     Rimuovi tutte le immagini selezionate
+                  </button>
+                </li>
+              </ul>
+            ) : null}
+          </div>
+
+          {editingId && existingVideosOrdered.length > 0 ? (
+            <div className="rounded-lg border border-[var(--nav-border)] bg-[var(--paper)] px-3 py-3">
+              <p className="text-sm font-medium text-[var(--ink)]">
+                Video già caricati ({existingVideosOrdered.length})
+              </p>
+              <p className="mt-1 text-xs text-[var(--ink-muted)]">
+                “Rimuovi” toglie il video solo da questo evento (non da Cloudinary). Puoi
+                ripristinarlo prima di salvare.
+              </p>
+              <ul className="mt-3 space-y-2">
+                {existingVideosOrdered.map((url, i) => {
+                  const removed = isExistingVideoIndexRemoved(i);
+                  return (
+                    <li
+                      key={`${url}-${i}`}
+                      className={[
+                        "flex flex-wrap items-center justify-between gap-2 rounded-md border border-[var(--nav-border)] bg-[var(--paper-deep)] px-2 py-2",
+                        removed ? "opacity-50" : "",
+                      ].join(" ")}
+                    >
+                      <a
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="min-w-0 truncate text-xs text-[var(--ink)] underline-offset-2 hover:underline"
+                      >
+                        {url}
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => toggleExistingVideoRemoval(i)}
+                        className={[
+                          "shrink-0 rounded border border-[var(--nav-border)] px-2 py-1 text-[10px] font-medium",
+                          removed
+                            ? "text-[var(--accent)]"
+                            : "text-[var(--ink-muted)] hover:bg-[var(--paper)]",
+                        ].join(" ")}
+                      >
+                        {removed ? "Ripristina" : "Rimuovi"}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ) : null}
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-[var(--ink)]">
+              Carica video (opzionale)
+            </label>
+            <input
+              key={videoInputKey}
+              type="file"
+              multiple
+              accept="video/*"
+              onChange={(e) => setVideoFiles(Array.from(e.target.files ?? []))}
+              className="w-full rounded-lg border border-[var(--nav-border)] bg-[var(--paper)] px-3 py-2 text-sm text-[var(--ink)] outline-none"
+            />
+            {videoFiles.length > 0 ? (
+              <ul className="mt-2 space-y-1.5">
+                {videoFiles.map((file, idx) => (
+                  <li
+                    key={`${file.name}-${idx}`}
+                    className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-[var(--nav-border)] bg-[var(--paper-deep)] px-2 py-1.5"
+                  >
+                    <span className="min-w-0 truncate text-xs text-[var(--ink-muted)]">
+                      {file.name}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setVideoFiles((prev) => prev.filter((_, i) => i !== idx))
+                      }
+                      className="shrink-0 rounded border border-[var(--nav-border)] px-2 py-0.5 text-[10px] text-[var(--ink-muted)] hover:bg-[var(--paper)]"
+                    >
+                      Rimuovi
+                    </button>
+                  </li>
+                ))}
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setVideoFiles([]);
+                      setVideoInputKey((k) => k + 1);
+                    }}
+                    className="text-xs font-medium text-[var(--ink-muted)] underline-offset-2 hover:underline"
+                  >
+                    Rimuovi tutti i video selezionati
                   </button>
                 </li>
               </ul>
