@@ -338,6 +338,10 @@ html[data-church] body {
   animation: campo-estivo-rise-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+.campo-estivo-popup-carousel {
+  touch-action: pan-y;
+}
+
 .campo-estivo-popup-track {
   width: 100%;
 }

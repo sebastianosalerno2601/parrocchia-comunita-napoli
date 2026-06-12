@@ -48,9 +48,19 @@ function HighlightCard({
   );
 }
 
+type TouchSwipeState = {
+  startX: number;
+  startY: number;
+  axis: "x" | "y" | null;
+};
+
+const SWIPE_THRESHOLD_PX = 48;
+
 export function CampoEstivoPopup() {
   const titleId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const touchSwipeRef = useRef<TouchSwipeState | null>(null);
   const [mounted, setMounted] = useState(false);
   const [open, setOpen] = useState(false);
   const [slide, setSlide] = useState(0);
@@ -110,6 +120,68 @@ export function CampoEstivoPopup() {
     return () => window.clearTimeout(t);
   }, [open, slide]);
 
+  useEffect(() => {
+    const el = carouselRef.current;
+    if (!el || !open) return;
+
+    const isMobile = () => window.matchMedia("(max-width: 767px)").matches;
+
+    const onTouchStart = (e: TouchEvent) => {
+      if (!isMobile() || e.touches.length !== 1) return;
+      touchSwipeRef.current = {
+        startX: e.touches[0].clientX,
+        startY: e.touches[0].clientY,
+        axis: null,
+      };
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      const touch = touchSwipeRef.current;
+      if (!touch || e.touches.length !== 1) return;
+
+      const dx = e.touches[0].clientX - touch.startX;
+      const dy = e.touches[0].clientY - touch.startY;
+
+      if (touch.axis === null) {
+        if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
+        touch.axis = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+      }
+
+      if (touch.axis === "x") {
+        e.preventDefault();
+      }
+    };
+
+    const onTouchEnd = (e: TouchEvent) => {
+      const touch = touchSwipeRef.current;
+      if (!touch || touch.axis !== "x") {
+        touchSwipeRef.current = null;
+        return;
+      }
+
+      const dx = e.changedTouches[0].clientX - touch.startX;
+      if (dx <= -SWIPE_THRESHOLD_PX) {
+        setSlide((s) => (s + 1) % SLIDE_COUNT);
+      } else if (dx >= SWIPE_THRESHOLD_PX) {
+        setSlide((s) => (s - 1 + SLIDE_COUNT) % SLIDE_COUNT);
+      }
+
+      touchSwipeRef.current = null;
+    };
+
+    el.addEventListener("touchstart", onTouchStart, { passive: true });
+    el.addEventListener("touchmove", onTouchMove, { passive: false });
+    el.addEventListener("touchend", onTouchEnd, { passive: true });
+    el.addEventListener("touchcancel", onTouchEnd, { passive: true });
+
+    return () => {
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchmove", onTouchMove);
+      el.removeEventListener("touchend", onTouchEnd);
+      el.removeEventListener("touchcancel", onTouchEnd);
+    };
+  }, [open]);
+
   const copyIban = async () => {
     try {
       await navigator.clipboard.writeText(IBAN);
@@ -165,7 +237,10 @@ export function CampoEstivoPopup() {
           </button>
         </header>
 
-        <div className="relative min-h-0 flex-1 overflow-hidden">
+        <div
+          ref={carouselRef}
+          className="campo-estivo-popup-carousel relative min-h-0 flex-1 overflow-hidden"
+        >
           <div
             className="campo-estivo-popup-track flex h-full min-h-0 items-stretch transition-transform duration-500 ease-out"
             style={{
