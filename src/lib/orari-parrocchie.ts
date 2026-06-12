@@ -24,7 +24,7 @@ export const ORARI_PARROCCHIE: Partial<Record<ParrocchiaSlug, OrariParrocchia>> 
       messe: [
         {
           titolo: "Domenica",
-          items: ["9:30 (Messa)"],
+          items: ["10:00 (Messa)"],
         },
       ],
       eventi: [
@@ -59,16 +59,12 @@ export const ORARI_PARROCCHIE: Partial<Record<ParrocchiaSlug, OrariParrocchia>> 
     "sant-arcangelo-armieri": {
       messe: [
         {
-          titolo: "Domenica",
-          items: ["12:15 (Messa)"],
-        },
-        {
-          titolo: "Feriale",
-          items: ["Tutti i giorni: 9:30 (Messa)"],
-        },
-        {
           titolo: "Sabato",
           items: ["18:30 (Messa)"],
+        },
+        {
+          titolo: "Domenica",
+          items: ["12:00 (Messa, sospesa nel mese di agosto)"],
         },
       ],
     },

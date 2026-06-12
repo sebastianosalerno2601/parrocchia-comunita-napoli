@@ -328,3 +328,50 @@ html[data-church] body {
     animation: none;
   }
 }
+
+/* Popup Campo Estivo SMAK — apertura sito */
+.campo-estivo-popup-backdrop {
+  animation: campo-estivo-fade-in 0.45s ease-out both;
+}
+
+.campo-estivo-popup-panel {
+  animation: campo-estivo-rise-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.campo-estivo-popup-track {
+  width: 100%;
+}
+
+.campo-estivo-popup-slide {
+  height: 100%;
+  max-height: 100%;
+}
+
+@keyframes campo-estivo-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes campo-estivo-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .campo-estivo-popup-backdrop,
+  .campo-estivo-popup-panel,
+  .campo-estivo-popup-track {
+    animation: none;
+    transition: none;
+  }
+}
