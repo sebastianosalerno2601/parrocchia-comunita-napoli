@@ -23,7 +23,6 @@ export function EventiGalleryLightbox({
   const [activeIdx, setActiveIdx] = useState<number | null>(null);
   const [downloadingAll, setDownloadingAll] = useState(false);
   const [lightboxLoaded, setLightboxLoaded] = useState(false);
-  const hasSingleImage = images.length === 1;
 
   const safeImages = useMemo(() => images.filter(Boolean), [images]);
   if (safeImages.length === 0) return null;
@@ -82,10 +81,7 @@ export function EventiGalleryLightbox({
       </div>
 
       <section
-        className={[
-          "mt-6 grid gap-4",
-          hasSingleImage ? "mx-auto max-w-3xl grid-cols-1" : "sm:grid-cols-2",
-        ].join(" ")}
+        className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3"
       >
         {safeImages.map((img, idx) => (
           <figure key={`${img}-${idx}`} className="space-y-2">
@@ -101,12 +97,7 @@ export function EventiGalleryLightbox({
               <img
                 src={withCloudinaryAuto(img)}
                 alt={`${title} - immagine ${idx + 1}`}
-                className={[
-                  "rounded-xl border border-[var(--nav-border)] object-cover object-center shadow-sm transition-opacity hover:opacity-95",
-                  hasSingleImage
-                    ? "mx-auto h-[26rem] w-full max-w-3xl"
-                    : "h-72 w-full",
-                ].join(" ")}
+                className="h-48 w-full rounded-xl border border-[var(--nav-border)] object-cover object-center shadow-sm transition-opacity hover:opacity-95 sm:h-56 md:h-60"
               />
             </button>
           </figure>

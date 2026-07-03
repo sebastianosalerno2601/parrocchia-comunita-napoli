@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getEventoById } from "@/lib/eventi-store";
-import { EventiGalleryLightbox } from "@/components/EventiGalleryLightbox";
+import { EventiMediaTabs } from "@/components/EventiMediaTabs";
 
 export const dynamic = "force-dynamic";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://santeligiomaggiore.it";
@@ -152,32 +152,7 @@ export default async function EventoDettaglioPage({ params }: PageProps) {
         </p>
       </article>
 
-      <EventiGalleryLightbox images={images} title={evento.titolo} />
-
-      {videos.length > 0 ? (
-        <section className="mx-auto mt-10 max-w-3xl">
-          <h2 className="font-display text-center text-2xl font-semibold text-[var(--ink)]">
-            Video dell’evento
-          </h2>
-          <div className="mt-4 space-y-4">
-            {videos.map((src, i) => (
-              <div
-                key={`${src}-${i}`}
-                className="overflow-hidden rounded-2xl border border-[var(--nav-border)] bg-black shadow-sm"
-              >
-                <video
-                  controls
-                  playsInline
-                  preload="metadata"
-                  className="aspect-video w-full object-contain"
-                >
-                  <source src={src} />
-                </video>
-              </div>
-            ))}
-          </div>
-        </section>
-      ) : null}
+      <EventiMediaTabs images={images} videos={videos} title={evento.titolo} />
 
       <p className="mt-10 text-center">
         <Link

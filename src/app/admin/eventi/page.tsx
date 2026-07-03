@@ -1,6 +1,10 @@
 "use client";
 
 import { FormEvent, useMemo, useState } from "react";
+import {
+  isVideoFile,
+  uploadFileDirectToCloudinary,
+} from "@/lib/cloudinary-client-upload";
 import { orderEventiForAdminList } from "@/lib/eventi-sort";
 
 type AdminEvento = {
@@ -144,10 +148,16 @@ export default function AdminEventiPage() {
   ): Promise<
     Array<{ secure_url: string; public_id: string }>
   > {
-    if (files.length === 0) throw new Error("Seleziona almeno un'immagine.");
+    if (files.length === 0) throw new Error("Seleziona almeno un file.");
 
     const uploadedAll: Array<{ secure_url: string; public_id: string }> = [];
     for (const file of files) {
+      if (isVideoFile(file)) {
+        const uploaded = await uploadFileDirectToCloudinary(file, token);
+        uploadedAll.push(uploaded);
+        continue;
+      }
+
       const form = new FormData();
       form.append("file", file);
 
@@ -663,6 +673,10 @@ export default function AdminEventiPage() {
               onChange={(e) => setVideoFiles(Array.from(e.target.files ?? []))}
               className="w-full rounded-lg border border-[var(--nav-border)] bg-[var(--paper)] px-3 py-2 text-sm text-[var(--ink)] outline-none"
             />
+            <p className="mt-1.5 text-xs leading-relaxed text-[var(--ink-muted)]">
+              I video vengono inviati direttamente a Cloudinary dal browser. Con molti
+              file l&apos;operazione può richiedere alcuni minuti: non chiudere la pagina.
+            </p>
             {videoFiles.length > 0 ? (
               <ul className="mt-2 space-y-1.5">
                 {videoFiles.map((file, idx) => (
