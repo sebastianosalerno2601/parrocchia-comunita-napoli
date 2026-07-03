@@ -8,11 +8,20 @@ function safeFileBase(name: string) {
   return name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 80) || "foto";
 }
 
-function extFromContentType(contentType: string | null) {
+function extFromContentType(contentType: string | null, url?: URL) {
   const ct = (contentType ?? "").toLowerCase();
+  if (ct.includes("mp4")) return "mp4";
+  if (ct.includes("webm")) return "webm";
+  if (ct.includes("quicktime")) return "mov";
   if (ct.includes("png")) return "png";
   if (ct.includes("webp")) return "webp";
   if (ct.includes("jpeg") || ct.includes("jpg")) return "jpg";
+  if (url) {
+    const path = url.pathname.toLowerCase();
+    if (path.endsWith(".mp4")) return "mp4";
+    if (path.endsWith(".webm")) return "webm";
+    if (path.endsWith(".mov")) return "mov";
+  }
   return "bin";
 }
 
@@ -29,12 +38,20 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Body JSON non valido." }, { status: 400 });
   }
 
-  const { urls, title } = (body ?? {}) as { urls?: unknown; title?: unknown };
+  const { urls, title, mediaKind } = (body ?? {}) as {
+    urls?: unknown;
+    title?: unknown;
+    mediaKind?: unknown;
+  };
   if (!Array.isArray(urls) || urls.length === 0) {
     return NextResponse.json({ error: "Lista URL mancante." }, { status: 400 });
   }
 
+  const kind = mediaKind === "videos" ? "videos" : "images";
+  const fileLabel = kind === "videos" ? "video" : "foto";
   const safeTitle = safeFileBase(typeof title === "string" ? title : "evento");
+  const zipName =
+    kind === "videos" ? `${safeTitle}-video.zip` : `${safeTitle}.zip`;
 
   const parsedUrls: URL[] = [];
   for (const u of urls) {
@@ -43,7 +60,7 @@ export async function POST(req: Request) {
       const parsed = new URL(u);
       if (!isAllowedHost(parsed)) {
         return NextResponse.json(
-          { error: "Host immagine non consentito." },
+          { error: "Host file non consentito." },
           { status: 400 },
         );
       }
@@ -68,8 +85,8 @@ export async function POST(req: Request) {
         const url = parsedUrls[i];
         const upstream = await fetch(url.toString(), { cache: "no-store" });
         if (!upstream.ok || !upstream.body) continue;
-        const ext = extFromContentType(upstream.headers.get("content-type"));
-        const name = `${safeTitle}-foto-${String(i + 1).padStart(2, "0")}.${ext}`;
+        const ext = extFromContentType(upstream.headers.get("content-type"), url);
+        const name = `${safeTitle}-${fileLabel}-${String(i + 1).padStart(2, "0")}.${ext}`;
         // Convert web stream to node stream for archiver
         const nodeStream = Readable.fromWeb(upstream.body as any);
         archive.append(nodeStream, { name });
@@ -89,7 +106,7 @@ export async function POST(req: Request) {
   return new NextResponse(out as any, {
     headers: {
       "content-type": "application/zip",
-      "content-disposition": `attachment; filename="${safeTitle}.zip"`,
+      "content-disposition": `attachment; filename="${zipName}"`,
       "cache-control": "private, no-store",
     },
   });

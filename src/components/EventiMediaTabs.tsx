@@ -20,6 +20,35 @@ export function EventiMediaTabs({
   const hasVideos = safeVideos.length > 0;
 
   const [tab, setTab] = useState<MediaTab>(hasImages ? "images" : "videos");
+  const [downloadingVideos, setDownloadingVideos] = useState(false);
+
+  const downloadAllVideos = async () => {
+    if (downloadingVideos || safeVideos.length === 0) return;
+    setDownloadingVideos(true);
+    try {
+      const res = await fetch("/api/download-images-zip", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          urls: safeVideos,
+          title,
+          mediaKind: "videos",
+        }),
+      });
+      if (!res.ok) return;
+      const blob = await res.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = objectUrl;
+      a.download = `${title}-video.zip`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(objectUrl);
+    } finally {
+      setDownloadingVideos(false);
+    }
+  };
 
   if (!hasImages && !hasVideos) return null;
 
@@ -83,6 +112,18 @@ export function EventiMediaTabs({
               Video dell&apos;evento
             </h2>
           ) : null}
+          <div className="mt-6 flex w-full justify-center">
+            <button
+              type="button"
+              onClick={downloadAllVideos}
+              disabled={downloadingVideos}
+              className="w-full max-w-md rounded-2xl bg-[var(--accent)] px-6 py-4 text-lg font-semibold text-[var(--paper)] shadow-sm transition-opacity hover:opacity-95 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto sm:px-7"
+            >
+              {downloadingVideos
+                ? "Preparazione download..."
+                : "Scarica tutti i video"}
+            </button>
+          </div>
           <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3">
             {safeVideos.map((src, i) => (
               <div
