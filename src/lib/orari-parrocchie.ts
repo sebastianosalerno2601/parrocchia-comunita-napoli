@@ -15,58 +15,72 @@ export const ORARI_PARROCCHIE: Partial<Record<ParrocchiaSlug, OrariParrocchia>> 
   {
     "sant-eligio-maggiore": {
       apertura: {
-        titolo: "Apertura e visite guidate",
-        items: [
-          "Martedì–Sabato: 8:30–13:30 (visite guidate e non guidate)",
-          "Domenica: 8:30–11:30",
-        ],
+        titolo: "Apertura e visite",
+        items: ["Martedì–Sabato: 8:30–13:00 (visite turistiche)"],
       },
       messe: [
         {
           titolo: "Domenica",
-          items: ["10:00 (Messa)"],
-        },
-      ],
-      eventi: [
-        {
-          titolo: "Giorno eucaristico (Giovedì)",
-          items: [
-            "17:30–18:30 Adorazione eucaristica (personale)",
-            "18:30–19:30 Adorazione eucaristica (comunitaria)",
-            "19:30–20:30 Adorazione eucaristica (personale)",
-            "20:30–21:30 Adorazione eucaristica (comunitaria)",
-          ],
+          items: ["9:00 (Santa Messa)"],
         },
       ],
     },
     "san-giovanni-a-mare": {
+      apertura: {
+        titolo: "Apertura e visite",
+        items: ["Martedì–Sabato: 8:30–13:00 (visite turistiche)"],
+      },
       messe: [
         {
           titolo: "Domenica",
-          items: ["10:45 (Messa)"],
+          items: [
+            "10:15 (Santa Messa per bambini e genitori, dal 18 ottobre 2026)",
+          ],
         },
       ],
       eventi: [
         {
-          titolo: "Catechesi e catechismo (Martedì)",
-          items: [
-            "17:00–18:15 Catechismo bambini",
-            "18:30–20:00 Catechismo adulti",
-          ],
+          titolo: "Catechismo bambini (Martedì e Giovedì)",
+          items: ["16:45–18:15 (dal 13 ottobre 2026)"],
         },
       ],
     },
     "sant-arcangelo-armieri": {
+      apertura: {
+        titolo: "Ufficio e confessioni",
+        items: [
+          "Lunedì–Venerdì: 9:00–12:00",
+          "Martedì e Giovedì: confessioni/ufficio su appuntamento (18:30–19:00 solo per trigesimi e anniversari)",
+          "Sabato: 17:30–20:00",
+        ],
+      },
       messe: [
         {
+          titolo: "Feriale",
+          items: ["Lunedì–Venerdì: 9:30 (Santa Messa)"],
+        },
+        {
           titolo: "Sabato",
-          items: ["18:30 (Messa)"],
+          items: ["18:30 (Santa Messa)"],
         },
         {
           titolo: "Domenica",
-          items: ["12:00 (Messa, sospesa nel mese di agosto)"],
+          items: ["12:00 (Santa Messa)"],
+        },
+      ],
+      eventi: [
+        {
+          titolo: "Catechesi adulti (Martedì)",
+          items: ["20:00 (dal 13 ottobre 2026)"],
+        },
+        {
+          titolo: "Adorazione eucaristica (Giovedì)",
+          items: ["20:00 (dal 15 ottobre 2026)"],
+        },
+        {
+          titolo: "Visite alle famiglie",
+          items: ["Lunedì, Mercoledì e Venerdì: 17:00–21:00"],
         },
       ],
     },
   };
-

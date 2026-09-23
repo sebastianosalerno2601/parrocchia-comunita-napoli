@@ -12,6 +12,7 @@ import { parrocchie } from "@/lib/parrocchie";
 
 /** Voci extra del menu mobile (drawer). Esempio: `{ href: "/orari", label: "Orari Messe" }`. */
 const MENU_EXTRA: { href: string; label: string }[] = [
+  { href: "/orari", label: "Orari" },
   { href: "/caritas", label: "Caritas" },
   { href: "/eventi", label: "Eventi" },
 ];
@@ -135,6 +136,9 @@ export function Navbar() {
           className="flex flex-wrap items-center justify-center gap-3 sm:flex-1 sm:justify-center sm:gap-3.5"
           aria-label="Parrocchie"
         >
+          <Link href="/orari" className="nav-pill font-display text-lg font-medium">
+            Orari
+          </Link>
           <Link href="/caritas" className="nav-pill font-display text-lg font-medium">
             Caritas
           </Link>

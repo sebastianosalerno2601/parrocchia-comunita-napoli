@@ -11,6 +11,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const paths = [
     "/",
+    "/orari",
     "/caritas",
     "/eventi",
     "/privacy-policy",
@@ -24,7 +25,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     url: `${base}${path}`,
     lastModified,
     changeFrequency:
-      path === "/" || path.startsWith("/chiese/") || path === "/eventi"
+      path === "/" ||
+      path.startsWith("/chiese/") ||
+      path === "/eventi" ||
+      path === "/orari"
         ? "weekly"
         : "monthly",
     priority:
@@ -32,7 +36,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         ? 1
         : path.startsWith("/chiese/")
           ? 0.8
-          : path === "/eventi"
+          : path === "/eventi" || path === "/orari"
             ? 0.7
             : 0.5,
   }));

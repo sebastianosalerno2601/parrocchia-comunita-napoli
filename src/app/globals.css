@@ -328,3 +328,297 @@ html[data-church] body {
     animation: none;
   }
 }
+
+/* Lettera pastorale: una tavola editoriale da sfogliare, non un popup intrusivo. */
+.letter-flipbook-stage {
+  display: flex;
+  justify-content: center;
+  min-height: 23.125rem;
+  perspective: 1800px;
+}
+
+.letter-flipbook {
+  filter: drop-shadow(0 24px 28px rgba(60, 48, 34, 0.18));
+}
+
+.letter-flipbook .stf__parent {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.letter-flipbook-page {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px rgba(50, 42, 31, 0.16);
+}
+
+.letter-flipbook-page::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow:
+    inset 14px 0 20px -18px rgba(35, 27, 18, 0.75),
+    inset -14px 0 20px -18px rgba(35, 27, 18, 0.55);
+}
+
+@media (max-width: 639px) {
+  .letter-flipbook-stage {
+    min-height: 0;
+  }
+}
+
+.letter-carousel-stage {
+  isolation: isolate;
+  perspective: 1800px;
+  transform-style: preserve-3d;
+}
+
+.letter-carousel-stage:focus-visible {
+  outline: 3px solid var(--accent-soft);
+  outline-offset: 8px;
+}
+
+.letter-page-base,
+.letter-page-turn {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border: 1px solid rgba(50, 42, 31, 0.18);
+  border-radius: 0.3rem;
+  background: #fff;
+}
+
+.letter-page-base {
+  z-index: 1;
+  box-shadow:
+    0 28px 60px rgba(60, 48, 34, 0.2),
+    0 2px 3px rgba(60, 48, 34, 0.14);
+}
+
+.letter-page-base::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: 0 auto 0 0;
+  width: 1.25rem;
+  background: linear-gradient(90deg, rgba(30, 23, 15, 0.13), transparent);
+  pointer-events: none;
+}
+
+.letter-page-base-reveal {
+  animation: letter-page-reveal 0.76s ease-out both;
+}
+
+.letter-page-turn {
+  z-index: 3;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  box-shadow:
+    18px 0 30px rgba(31, 24, 17, 0.22),
+    0 2px 3px rgba(31, 24, 17, 0.14);
+  will-change: transform, clip-path, filter;
+}
+
+.letter-page-turn > img {
+  backface-visibility: hidden;
+}
+
+.letter-page-curl {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+}
+
+.letter-page-turn-forward {
+  transform-origin: left center;
+  animation: letter-page-turn-forward 0.76s cubic-bezier(0.22, 0.78, 0.2, 1) both;
+}
+
+.letter-page-turn-forward .letter-page-curl {
+  background:
+    linear-gradient(90deg, transparent 52%, rgba(32, 23, 16, 0.06) 68%, rgba(16, 11, 8, 0.34) 100%),
+    radial-gradient(ellipse 16% 58% at 100% 50%, rgba(255, 255, 255, 0.65), transparent 72%);
+  animation: letter-page-curl-right 0.76s ease-in-out both;
+}
+
+.letter-page-turn-backward {
+  transform-origin: right center;
+  animation: letter-page-turn-backward 0.76s cubic-bezier(0.22, 0.78, 0.2, 1) both;
+}
+
+.letter-page-turn-backward .letter-page-curl {
+  background:
+    linear-gradient(270deg, transparent 52%, rgba(32, 23, 16, 0.06) 68%, rgba(16, 11, 8, 0.34) 100%),
+    radial-gradient(ellipse 16% 58% at 0% 50%, rgba(255, 255, 255, 0.65), transparent 72%);
+  animation: letter-page-curl-left 0.76s ease-in-out both;
+}
+
+@keyframes letter-page-reveal {
+  from {
+    filter: brightness(0.84);
+    transform: scale(0.992);
+  }
+  55% {
+    filter: brightness(0.96);
+  }
+  to {
+    filter: brightness(1);
+    transform: scale(1);
+  }
+}
+
+@keyframes letter-page-turn-forward {
+  from {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    filter: brightness(1);
+    transform: rotateY(0deg) skewY(0deg) translateX(0);
+  }
+  38% {
+    clip-path: polygon(0 0, 96% 1%, 88% 50%, 96% 99%, 0 100%);
+    filter: brightness(0.93);
+    transform: rotateY(-24deg) skewY(-0.6deg) translateX(-0.5%);
+  }
+  to {
+    clip-path: polygon(0 0, 66% 7%, 46% 50%, 66% 93%, 0 100%);
+    filter: brightness(0.64);
+    transform: rotateY(-104deg) skewY(-1.1deg) translateX(-6%);
+  }
+}
+
+@keyframes letter-page-turn-backward {
+  from {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    filter: brightness(1);
+    transform: rotateY(0deg) skewY(0deg) translateX(0);
+  }
+  38% {
+    clip-path: polygon(4% 1%, 100% 0, 100% 100%, 4% 99%, 12% 50%);
+    filter: brightness(0.93);
+    transform: rotateY(24deg) skewY(0.6deg) translateX(0.5%);
+  }
+  to {
+    clip-path: polygon(34% 7%, 100% 0, 100% 100%, 34% 93%, 54% 50%);
+    filter: brightness(0.64);
+    transform: rotateY(104deg) skewY(1.1deg) translateX(6%);
+  }
+}
+
+@keyframes letter-page-curl-right {
+  from,
+  to {
+    opacity: 0;
+  }
+  38% {
+    opacity: 1;
+  }
+}
+
+@keyframes letter-page-curl-left {
+  from,
+  to {
+    opacity: 0;
+  }
+  38% {
+    opacity: 1;
+  }
+}
+
+.letter-carousel-arrow,
+.letter-carousel-mobile-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.875rem;
+  height: 2.875rem;
+  border: 1px solid rgba(28, 25, 23, 0.14);
+  border-radius: 9999px;
+  background: rgba(255, 254, 251, 0.92);
+  color: var(--ink);
+  box-shadow:
+    0 8px 22px rgba(28, 25, 23, 0.12),
+    0 1px 0 rgba(255, 255, 255, 0.9) inset;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.letter-carousel-arrow:hover,
+.letter-carousel-mobile-arrow:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow:
+    0 12px 28px rgba(28, 25, 23, 0.16),
+    0 1px 0 rgba(255, 255, 255, 0.9) inset;
+}
+
+.letter-carousel-arrow:active,
+.letter-carousel-mobile-arrow:active {
+  transform: scale(0.94);
+}
+
+.letter-carousel-arrow:focus-visible,
+.letter-carousel-mobile-arrow:focus-visible {
+  outline: 3px solid var(--accent-soft);
+  outline-offset: 3px;
+}
+
+.letter-carousel-arrow:disabled,
+.letter-carousel-mobile-arrow:disabled {
+  cursor: wait;
+  opacity: 0.52;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .letter-page-base-reveal,
+  .letter-page-turn,
+  .letter-page-turn .letter-page-curl {
+    animation: none;
+  }
+
+  .letter-carousel-arrow,
+  .letter-carousel-mobile-arrow {
+    transition: none;
+  }
+}
+
+/* Popup Festa della Purità */
+.festa-purita-popup-backdrop {
+  animation: festa-purita-fade-in 0.4s ease-out both;
+}
+
+.festa-purita-popup-panel {
+  animation: festa-purita-rise-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes festa-purita-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes festa-purita-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .festa-purita-popup-backdrop,
+  .festa-purita-popup-panel {
+    animation: none;
+  }
+}

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { LetteraPastoraleFlipBook } from "@/components/LetteraPastoraleFlipBook";
 import { parrocchie } from "@/lib/parrocchie";
 import { buildHomePageJsonLd } from "@/lib/seo-home-jsonld";
 
@@ -61,8 +62,24 @@ export default function Home() {
             mare: chiese diverse per storia e architettura, unite nella stessa
             missione.
           </p>
+          <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
+            <Link
+              href="#lettera-pastorale"
+              className="inline-flex min-h-12 items-center justify-center rounded-full border border-(--accent) bg-(--paper)/85 px-6 py-3 text-sm font-semibold tracking-[0.08em] text-(--accent) shadow-sm transition hover:-translate-y-0.5 hover:bg-(--accent) hover:text-background focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--accent)"
+            >
+              LETTERA PASTORALE 2026/27
+            </Link>
+            <Link
+              href="/orari"
+              className="inline-flex min-h-12 items-center justify-center rounded-full border border-(--nav-border) bg-white/80 px-6 py-3 text-sm font-semibold tracking-[0.08em] text-foreground shadow-sm transition hover:-translate-y-0.5 hover:border-(--accent) hover:text-(--accent) focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--accent)"
+            >
+              ORARI E PROGRAMMI
+            </Link>
+          </div>
         </div>
       </section>
+
+      <LetteraPastoraleFlipBook />
 
       <section className="mx-auto w-full max-w-6xl flex-1 px-4 pb-20">
         <div className="grid gap-6 md:grid-cols-3">
