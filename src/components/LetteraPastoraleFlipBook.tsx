@@ -106,6 +106,7 @@ export function LetteraPastoraleFlipBook() {
           <div className="letter-flipbook-stage">
             <HTMLFlipBook
               ref={bookRef}
+              startPage={0}
               width={430}
               height={589}
               size="stretch"
